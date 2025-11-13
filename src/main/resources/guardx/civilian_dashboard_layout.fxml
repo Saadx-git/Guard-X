@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="guardx.CivilianDashboardController"
+            stylesheets="@styles.css">
+
+    <!-- Left Drawer -->
+    <left>
+        <VBox style="-fx-background-color: #1e293b; -fx-pref-width: 250; -fx-min-height: 768;" spacing="0">
+            <!-- Header -->
+            <VBox style="-fx-background-color: #0f172a; -fx-padding: 20;" alignment="CENTER">
+                <StackPane>
+                    <Circle radius="25" fill="#2563eb"/>
+                    <!-- Shield icon -->
+                    <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                        <Image url="@icons/guard.png"/>
+                    </ImageView>
+                </StackPane>
+                <Label text="GuardX" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+                <Label text="Law Enforcement System" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+            </VBox>
+
+            <!-- Navigation -->
+            <VBox style="-fx-padding: 20 0;" spacing="5">
+                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleDashboard">
+                    <!-- Dashboard icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/dashboard.png"/>
+                    </ImageView>
+                    <Label text="Dashboard" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+                
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleReports">
+                    <!-- Reports icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/google-docs.png"/>
+                    </ImageView>
+                    <Label text="Incident Reports" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleComplaints">
+                    <!-- Complaints icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/complaint.png"/>
+                    </ImageView>
+                    <Label text="Complaints" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleCases">
+                    <!-- Cases icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/analysis.png"/>
+                    </ImageView>
+                    <Label text="My Cases" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleCertificates">
+                    <!-- Certificates icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/stamp.png"/>
+                    </ImageView>
+                    <Label text="Certificates" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleProfile">
+                    <!-- Profile icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@icons/bussiness-man.png"/>
+                    </ImageView>
+                    <Label text="My Profile" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Spacer -->
+            <VBox VBox.vgrow="ALWAYS"/>
+
+            <!-- Footer -->
+            <VBox style="-fx-background-color: #0f172a; -fx-padding: 15;" spacing="5">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
+                      onMouseClicked="#handleSettings">
+                    <!-- Settings icon -->
+                    <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                        <Image url="@icons/settings.png"/>
+                    </ImageView>
+                    <Label text="Settings" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
+                      onMouseClicked="#handleLogout">
+                    <!-- Logout icon -->
+                    <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                        <Image url="@icons/logout.png"/>
+                    </ImageView>
+                    <Label text="Logout" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Main Content Area -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: #f8fafc; -fx-border-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 20;">
+
+                <!-- Welcome Banner -->
+                <VBox style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                    <Label text="Welcome, User!" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
+                    <Label text="Access all your services from the dashboard below. We're here to serve and protect." 
+                           style="-fx-text-fill: #bfdbfe; -fx-font-size: 14; -fx-wrap-text: true;"/>
+                </VBox>
+
+                <!-- Quick Access Section -->
+                <VBox spacing="10">
+                    <Label text="Quick Access" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    
+                    <GridPane hgap="15" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                        </columnConstraints>
+                        
+                        <!-- Submit Incident Report -->
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handleSubmitReport">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #3b82f6; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Incident Report icon -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/google-docs.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Submit Incident Report" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="Report a crime or incident that occurred" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Submit Complaint -->
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handleSubmitComplaint">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #f59e0b; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Complaint icon -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/warning.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Submit Complaint" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="File a complaint about police conduct" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Request Emergency Assistance -->
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="0"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handleEmergencyAssistance">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #ef4444; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Emergency icon (using warning as emergency) -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/warning.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Request Emergency Assistance" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="Get immediate help in emergencies" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Track Case Status -->
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handleTrackCase">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #10b981; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Track Case icon -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/analysis.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Track Case Status" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="Check the progress of your cases" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Manage Profile -->
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handleManageProfile">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #8b5cf6; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Profile icon -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/bussiness-man.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Manage Profile" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="Update your personal information" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Print Police Certificate -->
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="1"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-cursor: hand;"
+                              onMouseClicked="#handlePrintCertificate">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <StackPane style="-fx-background-color: #6366f1; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <!-- Certificate icon -->
+                                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                                        <Image url="@icons/stamp.png"/>
+                                    </ImageView>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Print Police Certificate" style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                                    <Label text="Request and print police clearance" 
+                                           style="-fx-text-fill: #64748b; -fx-font-size: 12; -fx-wrap-text: true;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Recent Activity Section (unchanged) -->
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <VBox spacing="5">
+                        <Label text="Recent Activity" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Your latest interactions with the system" style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
+                    </VBox>
+                    
+                    <VBox spacing="10" style="-fx-padding: 15 0 0 0;">
+                        <!-- Activity Items (unchanged) -->
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
+                            <Circle radius="4" fill="#2563eb"/>
+                            <VBox spacing="2">
+                                <Label text="Case #1001 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
+                                <Label text="2 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+                            </VBox>
+                        </HBox>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
+                            <Circle radius="4" fill="#2563eb"/>
+                            <VBox spacing="2">
+                                <Label text="Case #1002 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
+                                <Label text="3 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+                            </VBox>
+                        </HBox>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
+                            <Circle radius="4" fill="#2563eb"/>
+                            <VBox spacing="2">
+                                <Label text="Case #1003 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
+                                <Label text="5 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+                
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

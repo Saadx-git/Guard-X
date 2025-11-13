@@ -9,32 +9,34 @@ import javafx.stage.Stage;
 public class App extends Application {
     
     private static Scene scene;
-    private static Stage primaryStage;
+    private static Stage AuthStage;
     
     @Override
     public void start(Stage stage) {
         try {
-            System.out.println("🚀 Starting GuardX Application...");
-            
-            primaryStage = stage;
-            // Load the FXML
-            Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
-            
-            // Set scene with 1360x768 resolution
-            scene = new Scene(root, 1360, 768);
-            primaryStage.setTitle("GuardX - Law Enforcement Management System");
-            primaryStage.setScene(scene);
-            primaryStage.setWidth(1360);
-            primaryStage.setHeight(768);
-            primaryStage.show();
-            
+            System.out.println("🚀 Starting " + Globals.APP_NAME + " Application...");
+            AuthStage = stage;
+
+            Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
+            scene = new Scene(root, Globals.APP_WIDTH, Globals.APP_HEIGHT);
+
+            AuthStage.setTitle(Globals.APP_NAME + " - " + Globals.APP_SUBTITLE);
+            AuthStage.setScene(scene);
+            AuthStage.setResizable(true);
+            AuthStage.centerOnScreen();
+            AuthStage.show();
+
+            // enforce your desired window size after show
+            AuthStage.setWidth(Globals.APP_WIDTH);
+            AuthStage.setHeight(Globals.APP_HEIGHT);
+
             System.out.println("✅ Application started successfully!");
-            
         } catch (Exception e) {
             System.out.println("❌ ERROR loading FXML: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
     
     public static void setRoot(String fxml) throws Exception {
         Parent root = FXMLLoader.load(App.class.getResource(fxml + ".fxml"));

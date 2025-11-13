@@ -22,6 +22,8 @@ public class LoginController {
         String email = civilianEmail.getText();
         String password = civilianPassword.getText();
         
+        //login(email, password, "civilian");
+
         if (!email.isEmpty() && !password.isEmpty()) {
             System.out.println("Civilian login attempt: " + email);
             login(email, password, "civilian");
@@ -54,21 +56,23 @@ public class LoginController {
     }
     
     private void login(String email, String password, String role) {
-        // TODO: Implement actual authentication logic
+    if (!email.isEmpty() && !password.isEmpty()) {
         System.out.println("Login: " + email + " | Role: " + role);
         
         try {
-            // Example navigation - replace with your actual screens
             if ("civilian".equals(role)) {
-                App.setRoot("civilian_dashboard"); // Create this FXML
+                App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD); // This should now be "civilian_dashboard_layout"
             } else {
-                App.setRoot("officer_dashboard"); // Create this FXML
+                App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD); // Use same for now
             }
         } catch (Exception e) {
+            System.out.println("❌ Navigation Error: " + e.getMessage());
             e.printStackTrace();
-            showAlert("Navigation Error", "Could not load dashboard: " + e.getMessage());
         }
+    } else {
+        showAlert("Error", "Please enter both email and password.");
     }
+}
     
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
