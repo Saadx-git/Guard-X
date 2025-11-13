@@ -18,7 +18,15 @@ public class App extends Application {
             AuthStage = stage;
 
             Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
-            scene = new Scene(root, Globals.APP_WIDTH, Globals.APP_HEIGHT);
+            
+            javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+            double screenWidth = screenBounds.getWidth();
+            double screenHeight = screenBounds.getHeight();
+            
+            System.out.println("Screen dimensions: " + screenWidth + "x" + screenHeight);
+            
+            // Use full screen or adjust based on screen size
+            scene = new Scene(root, screenWidth, screenHeight);
 
             AuthStage.setTitle(Globals.APP_NAME + " - " + Globals.APP_SUBTITLE);
             AuthStage.setScene(scene);
@@ -27,8 +35,8 @@ public class App extends Application {
             AuthStage.show();
 
             // enforce your desired window size after show
-            AuthStage.setWidth(Globals.APP_WIDTH);
-            AuthStage.setHeight(Globals.APP_HEIGHT);
+            //uthStage.setWidth(Globals.APP_WIDTH);
+            //uthStage.setHeight(Globals.APP_HEIGHT);
 
             System.out.println("✅ Application started successfully!");
         } catch (Exception e) {

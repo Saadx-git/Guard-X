@@ -9,8 +9,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
             xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="guardx.IncidentReportController"
-            stylesheets="@IncidentReportstyles.css">
+            fx:controller="guardx.ComplaintController">
 
     <!-- Left Sidebar -->
     <left>
@@ -37,20 +36,20 @@
                     <Label text="Dashboard" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
                 
-                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
                       onMouseClicked="#handleIncidentReport">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/google-docs.png"/>
                     </ImageView>
-                    <Label text="Incident Report" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                    <Label text="Submit Report" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
                       onMouseClicked="#handleComplaints">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/complaint.png"/>
                     </ImageView>
-                    <Label text="Complaints" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                    <Label text="Complaints" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
@@ -108,65 +107,89 @@
 
                 <!-- Header -->
                 <VBox spacing="5">
-                    <Label text="Submit Incident Report" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                    <Label text="Provide detailed information about the incident you wish to report" 
+                    <Label text="Submit Complaint" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <Label text="File a formal complaint regarding police conduct or service" 
                            style="-fx-text-fill: #64748b; -fx-font-size: 16;"/>
                 </VBox>
 
-                <!-- Incident Report Form Card -->
+                <!-- Complaint Form Card -->
                 <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
                     <VBox spacing="10">
-                        <Label text="Incident Details" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                        <Label text="Fill out all required fields marked with an asterisk (*)" 
+                        <Label text="Complaint Information" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Provide details about your complaint for proper investigation" 
                                style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
                     </VBox>
 
                     <VBox spacing="20" style="-fx-padding: 20 0 0 0;">
-                        <!-- Incident Title -->
+                        <!-- Complaint Type -->
                         <VBox spacing="8">
                             <HBox spacing="5">
-                                <Label text="Incident Title" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="Complaint Type" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                                 <Text text="*" fill="red"/>
                             </HBox>
-                            <TextField fx:id="titleField" 
-                                      promptText="Brief title describing the incident"
-                                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            <ComboBox fx:id="complaintTypeCombo" 
+                                     promptText="Select complaint type"
+                                     style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                         </VBox>
 
-                        <!-- Date and Time -->
-                        <HBox spacing="15">
-                            <!-- Date -->
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <!-- Related Case ID -->
+                        <VBox spacing="8">
+                            <Label text="Related Incident/Case ID (Optional)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            <TextField fx:id="relatedCaseField" 
+                                      promptText="e.g., #1234"
+                                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            <Label text="If this complaint is related to an existing case, provide the case ID" 
+                                   style="-fx-text-fill: #6b7280; -fx-font-size: 12;"/>
+                        </VBox>
+
+                        <!-- Officer Details -->
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            
+                            <VBox GridPane.columnIndex="0" spacing="8">
+                                <Label text="Officer Name (if known)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <TextField fx:id="officerNameField" 
+                                          promptText="Officer's name"
+                                          style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            </VBox>
+                            
+                            <VBox GridPane.columnIndex="1" spacing="8">
+                                <Label text="Badge Number (if known)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <TextField fx:id="badgeNumberField" 
+                                          promptText="Badge number"
+                                          style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- Date and Location -->
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            
+                            <VBox GridPane.columnIndex="0" spacing="8">
                                 <HBox spacing="5">
                                     <Label text="Date of Incident" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                                     <Text text="*" fill="red"/>
                                 </HBox>
-                                <DatePicker fx:id="datePicker" 
+                                <DatePicker fx:id="incidentDatePicker" 
                                            style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                             </VBox>
-
-                            <!-- Time -->
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            
+                            <VBox GridPane.columnIndex="1" spacing="8">
                                 <HBox spacing="5">
-                                    <Label text="Time of Incident" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                    <Label text="Location" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                                     <Text text="*" fill="red"/>
                                 </HBox>
-                                <TextField fx:id="timeField" 
-                                          promptText="HH:MM (e.g., 14:30)"
+                                <TextField fx:id="locationField" 
+                                          promptText="Location where incident occurred"
                                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                             </VBox>
-                        </HBox>
-
-                        <!-- Location -->
-                        <VBox spacing="8">
-                            <HBox spacing="5">
-                                <Label text="Location" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                                <Text text="*" fill="red"/>
-                            </HBox>
-                            <TextField fx:id="locationField" 
-                                      promptText="Street address or location description"
-                                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
-                        </VBox>
+                        </GridPane>
 
                         <!-- Description -->
                         <VBox spacing="8">
@@ -175,27 +198,35 @@
                                 <Text text="*" fill="red"/>
                             </HBox>
                             <TextArea fx:id="descriptionArea" 
-                                     promptText="Provide a detailed description of what happened..."
+                                     promptText="Provide a detailed account of the incident and your complaint..."
                                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14; -fx-pref-height: 150; -fx-wrap-text: true;"/>
                         </VBox>
 
                         <!-- File Upload -->
                         <VBox spacing="8">
-                            <Label text="Attachments (Images, Videos, Documents)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            <Label text="Supporting Evidence (Optional)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                             <VBox style="-fx-border-color: #d1d5db; -fx-border-style: dashed; -fx-border-width: 2; -fx-border-radius: 8; -fx-padding: 30; -fx-alignment: CENTER; -fx-cursor: hand;"
                                   onMouseClicked="#handleFileUpload">
                                 <ImageView fitWidth="32" fitHeight="32" preserveRatio="true">
                                     <Image url="@Icons/upload.png"/>
                                 </ImageView>
-                                <Label text="Click to upload or drag and drop" style="-fx-font-size: 14; -fx-text-fill: #6b7280; -fx-padding: 5 0 0 0;"/>
-                                <Label text="PNG, JPG, PDF, or MP4 (max. 50MB)" style="-fx-font-size: 12; -fx-text-fill: #9ca3af;"/>
+                                <Label text="Upload photos, videos, or documents" style="-fx-font-size: 14; -fx-text-fill: #6b7280; -fx-padding: 5 0 0 0;"/>
+                                <Label text="Accepted formats: PNG, JPG, PDF, MP4 (max. 50MB)" style="-fx-font-size: 12; -fx-text-fill: #9ca3af;"/>
                             </VBox>
+                        </VBox>
+
+                        <!-- Witness Information -->
+                        <VBox spacing="8">
+                            <Label text="Witness Information (Optional)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            <TextArea fx:id="witnessesArea" 
+                                     promptText="Names and contact information of any witnesses..."
+                                     style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14; -fx-pref-height: 100; -fx-wrap-text: true;"/>
                         </VBox>
 
                         <!-- Submit Buttons -->
                         <HBox spacing="15" style="-fx-padding: 20 0 0 0;">
-                            <Button text="Submit Report" 
-                                   onAction="#handleSubmit"
+                            <Button text="Submit Complaint" 
+                                   onAction="#handleSubmitComplaint"
                                    style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 12 24; -fx-pref-width: 200;"
                                    HBox.hgrow="ALWAYS"/>
                             <Button text="Save as Draft" 

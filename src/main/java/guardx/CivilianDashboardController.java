@@ -24,7 +24,7 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleComplaints() {
-        showAlert("Complaints", "Opening complaints...");
+        handleSubmitComplaint();
     }
 
     @FXML
@@ -62,7 +62,7 @@ public class CivilianDashboardController {
     @FXML
     private void handleSubmitReport() {
         try {
-            App.setRoot("incident_report");
+            App.setRoot(Globals.FXML_INCIDENT_REPORT_FORM);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Navigation Error", "Could not load incident report form: " + e.getMessage());
@@ -71,7 +71,12 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleSubmitComplaint() {
-        showAlert("Submit Complaint", "Opening complaint form...");
+        try {
+            App.setRoot(Globals.FXML_COMPLAINT_FORM);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load complaint form: " + e.getMessage());
+        }
     }
 
     @FXML

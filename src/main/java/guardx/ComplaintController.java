@@ -5,19 +5,32 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import java.time.LocalDate;
 
-public class IncidentReportController {
+public class ComplaintController {
 
-    @FXML private TextField titleField;
-    @FXML private DatePicker datePicker;
-    @FXML private TextField timeField;
+    @FXML private ComboBox<String> complaintTypeCombo;
+    @FXML private TextField relatedCaseField;
+    @FXML private TextField officerNameField;
+    @FXML private TextField badgeNumberField;
+    @FXML private DatePicker incidentDatePicker;
     @FXML private TextField locationField;
     @FXML private TextArea descriptionArea;
+    @FXML private TextArea witnessesArea;
 
     @FXML
     public void initialize() {
-        System.out.println("✅ Incident Report Controller initialized!");
+        System.out.println("✅ Complaint Controller initialized!");
         // Set current date as default
-        datePicker.setValue(LocalDate.now());
+        incidentDatePicker.setValue(LocalDate.now());
+        
+        // Initialize complaint types
+        complaintTypeCombo.getItems().addAll(
+            "Officer Misconduct",
+            "Excessive Force", 
+            "Unprofessional Behavior",
+            "Negligence of Duty",
+            "Corruption",
+            "Other"
+        );
     }
 
     // Navigation handlers
@@ -27,22 +40,24 @@ public class IncidentReportController {
             App.setRoot("civilian_dashboard_layout");
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert("Navigation Error", "Could not load dashboard: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleIncidentReport() {
-        // Already on this page
+        try {
+            App.setRoot("incident_report");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load incident report: " + e.getMessage());
+        }
     }
 
     @FXML
     private void handleComplaints() {
-         try {
-            App.setRoot("complaint_form");
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Navigation Error", "Could not load complaint form: " + e.getMessage());
-        }
+        // Already on this page
+        System.out.println("Already on Complaints page");
     }
 
     @FXML
@@ -71,12 +86,13 @@ public class IncidentReportController {
             App.setRoot("login");
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert("Logout Error", "Could not logout: " + e.getMessage());
         }
     }
 
     // Form handlers
     @FXML
-    private void handleSubmit() {
+    private void handleSubmitComplaint() {
         if (validateForm()) {
             showConfirmationDialog();
         }
@@ -84,7 +100,7 @@ public class IncidentReportController {
 
     @FXML
     private void handleSaveDraft() {
-        showAlert("Draft Saved", "Your incident report has been saved as draft.");
+        showAlert("Draft Saved", "Your complaint has been saved as draft.");
     }
 
     @FXML
@@ -93,16 +109,12 @@ public class IncidentReportController {
     }
 
     private boolean validateForm() {
-        if (titleField.getText().isEmpty()) {
-            showAlert("Validation Error", "Please enter an incident title.");
+        if (complaintTypeCombo.getValue() == null || complaintTypeCombo.getValue().isEmpty()) {
+            showAlert("Validation Error", "Please select a complaint type.");
             return false;
         }
-        if (datePicker.getValue() == null) {
+        if (incidentDatePicker.getValue() == null) {
             showAlert("Validation Error", "Please select the incident date.");
-            return false;
-        }
-        if (timeField.getText().isEmpty()) {
-            showAlert("Validation Error", "Please enter the incident time.");
             return false;
         }
         if (locationField.getText().isEmpty()) {
@@ -118,10 +130,11 @@ public class IncidentReportController {
 
     private void showConfirmationDialog() {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Report Submitted Successfully");
+        alert.setTitle("Complaint Submitted Successfully");
         alert.setHeaderText(null);
-        alert.setContentText("Your incident report has been submitted and assigned case ID #1234.\n\n" +
-                           "You will receive updates via email and can track the progress in the \"Track Case Status\" section.");
+        alert.setContentText("Your complaint has been submitted and assigned complaint ID #COMP789.\n\n" +
+                           "The internal affairs department will review your complaint and you will be " +
+                           "notified of any updates via email.");
         
         alert.showAndWait();
         
@@ -137,11 +150,14 @@ public class IncidentReportController {
     }
 
     private void clearForm() {
-        titleField.clear();
-        datePicker.setValue(LocalDate.now());
-        timeField.clear();
+        complaintTypeCombo.setValue(null);
+        relatedCaseField.clear();
+        officerNameField.clear();
+        badgeNumberField.clear();
+        incidentDatePicker.setValue(LocalDate.now());
         locationField.clear();
         descriptionArea.clear();
+        witnessesArea.clear();
     }
 
     private void showAlert(String title, String message) {

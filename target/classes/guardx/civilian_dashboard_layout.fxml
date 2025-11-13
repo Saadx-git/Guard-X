@@ -10,19 +10,18 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
             xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="guardx.CivilianDashboardController"
-            stylesheets="@styles.css">
+            fx:controller="guardx.CivilianDashboardController">
 
     <!-- Left Drawer -->
     <left>
-        <VBox style="-fx-background-color: #1e293b; -fx-pref-width: 250; -fx-min-height: 768;" spacing="0">
+        <VBox style="-fx-background-color: #1e293b; -fx-pref-width: 450; -fx-min-height: 768;" spacing="0">
             <!-- Header -->
             <VBox style="-fx-background-color: #0f172a; -fx-padding: 20;" alignment="CENTER">
                 <StackPane>
                     <Circle radius="25" fill="#2563eb"/>
                     <!-- Shield icon -->
                     <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
-                        <Image url="@icons/guard.png"/>
+                        <Image url="@Icons/guard.png"/>
                     </ImageView>
                 </StackPane>
                 <Label text="GuardX" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
@@ -35,7 +34,7 @@
                       onMouseClicked="#handleDashboard">
                     <!-- Dashboard icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/dashboard.png"/>
+                        <Image url="@Icons/dashboard.png"/>
                     </ImageView>
                     <Label text="Dashboard" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -44,7 +43,7 @@
                       onMouseClicked="#handleReports">
                     <!-- Reports icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/google-docs.png"/>
+                        <Image url="@Icons/google-docs.png"/>
                     </ImageView>
                     <Label text="Incident Reports" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -53,7 +52,7 @@
                       onMouseClicked="#handleComplaints">
                     <!-- Complaints icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/complaint.png"/>
+                        <Image url="@Icons/complaint.png"/>
                     </ImageView>
                     <Label text="Complaints" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -62,7 +61,7 @@
                       onMouseClicked="#handleCases">
                     <!-- Cases icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/analysis.png"/>
+                        <Image url="@Icons/analysis.png"/>
                     </ImageView>
                     <Label text="My Cases" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -71,7 +70,7 @@
                       onMouseClicked="#handleCertificates">
                     <!-- Certificates icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/stamp.png"/>
+                        <Image url="@Icons/stamp.png"/>
                     </ImageView>
                     <Label text="Certificates" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -80,7 +79,7 @@
                       onMouseClicked="#handleProfile">
                     <!-- Profile icon -->
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@icons/bussiness-man.png"/>
+                        <Image url="@Icons/bussiness-man.png"/>
                     </ImageView>
                     <Label text="My Profile" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
@@ -95,7 +94,7 @@
                       onMouseClicked="#handleSettings">
                     <!-- Settings icon -->
                     <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
-                        <Image url="@icons/settings.png"/>
+                        <Image url="@Icons/settings.png"/>
                     </ImageView>
                     <Label text="Settings" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
                 </HBox>
@@ -103,7 +102,7 @@
                       onMouseClicked="#handleLogout">
                     <!-- Logout icon -->
                     <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
-                        <Image url="@icons/logout.png"/>
+                        <Image url="@Icons/logout.png"/>
                     </ImageView>
                     <Label text="Logout" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
                 </HBox>
@@ -142,7 +141,7 @@
                                 <StackPane style="-fx-background-color: #3b82f6; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Incident Report icon -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/google-docs.png"/>
+                                        <Image url="@Icons/google-docs.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
@@ -161,7 +160,7 @@
                                 <StackPane style="-fx-background-color: #f59e0b; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Complaint icon -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/warning.png"/>
+                                        <Image url="@Icons/warning.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
@@ -180,7 +179,7 @@
                                 <StackPane style="-fx-background-color: #ef4444; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Emergency icon (using warning as emergency) -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/warning.png"/>
+                                        <Image url="@Icons/warning.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
@@ -199,7 +198,7 @@
                                 <StackPane style="-fx-background-color: #10b981; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Track Case icon -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/analysis.png"/>
+                                        <Image url="@Icons/analysis.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
@@ -218,7 +217,7 @@
                                 <StackPane style="-fx-background-color: #8b5cf6; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Profile icon -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/bussiness-man.png"/>
+                                        <Image url="@Icons/bussiness-man.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
@@ -237,7 +236,7 @@
                                 <StackPane style="-fx-background-color: #6366f1; -fx-background-radius: 8; -fx-padding: 10;">
                                     <!-- Certificate icon -->
                                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                                        <Image url="@icons/stamp.png"/>
+                                        <Image url="@Icons/stamp.png"/>
                                     </ImageView>
                                 </StackPane>
                                 <VBox spacing="2">
