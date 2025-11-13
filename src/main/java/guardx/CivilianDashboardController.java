@@ -19,7 +19,7 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleReports() {
-        showAlert("Incident Reports", "Opening incident reports...");
+        handleSubmitReport();
     }
 
     @FXML
@@ -61,7 +61,12 @@ public class CivilianDashboardController {
     // Quick Access Card handlers
     @FXML
     private void handleSubmitReport() {
-        showAlert("Submit Report", "Opening incident report form...");
+        try {
+            App.setRoot("incident_report");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load incident report form: " + e.getMessage());
+        }
     }
 
     @FXML

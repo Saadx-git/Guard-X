@@ -24,12 +24,12 @@ public class LoginController {
         
         //login(email, password, "civilian");
 
-        if (!email.isEmpty() && !password.isEmpty()) {
+        //if (!email.isEmpty() && !password.isEmpty()) {
             System.out.println("Civilian login attempt: " + email);
             login(email, password, "civilian");
-        } else {
-            showAlert("Error", "Please enter both email and password.");
-        }
+        //} else {
+        //    showAlert("Error", "Please enter both email and password.");
+        //}
     }
     
     @FXML
@@ -56,7 +56,7 @@ public class LoginController {
     }
     
     private void login(String email, String password, String role) {
-    if (!email.isEmpty() && !password.isEmpty()) {
+    //if (!email.isEmpty() && !password.isEmpty()) {
         System.out.println("Login: " + email + " | Role: " + role);
         
         try {
@@ -69,9 +69,9 @@ public class LoginController {
             System.out.println("❌ Navigation Error: " + e.getMessage());
             e.printStackTrace();
         }
-    } else {
-        showAlert("Error", "Please enter both email and password.");
-    }
+    //} else {
+    //    showAlert("Error", "Please enter both email and password.");
+    //}
 }
     
     private void showAlert(String title, String message) {
