@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="guardx.EmergencyAssistanceController">
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox style="-fx-background-color: #1e293b; -fx-pref-width: 450; -fx-min-height: 768;" spacing="0">
+            <!-- Header -->
+            <VBox style="-fx-background-color: #0f172a; -fx-padding: 20;" alignment="CENTER">
+                <StackPane>
+                    <Circle radius="25" fill="#2563eb"/>
+                    <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                        <Image url="@Icons/guard.png"/>
+                    </ImageView>
+                </StackPane>
+                <Label text="GuardX" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+                <Label text="Law Enforcement System" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+            </VBox>
+
+            <!-- Navigation -->
+            <VBox style="-fx-padding: 20 0;" spacing="5">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleDashboard">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/dashboard.png"/>
+                    </ImageView>
+                    <Label text="Dashboard" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+                
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleIncidentReport">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/google-docs.png"/>
+                    </ImageView>
+                    <Label text="Submit Report" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleComplaints">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/complaint.png"/>
+                    </ImageView>
+                    <Label text="Complaints" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleEmergency">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/warning.png"/>
+                    </ImageView>
+                    <Label text="Emergency Assistance" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleCases">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/analysis.png"/>
+                    </ImageView>
+                    <Label text="My Cases" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleCertificates">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/stamp.png"/>
+                    </ImageView>
+                    <Label text="Certificates" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleProfile">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/bussiness-man.png"/>
+                    </ImageView>
+                    <Label text="My Profile" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Spacer -->
+            <VBox VBox.vgrow="ALWAYS"/>
+
+            <!-- Footer -->
+            <VBox style="-fx-background-color: #0f172a; -fx-padding: 15;" spacing="5">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
+                      onMouseClicked="#handleLogout">
+                    <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                        <Image url="@Icons/logout.png"/>
+                    </ImageView>
+                    <Label text="Logout" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Main Content Area -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: #f8fafc; -fx-border-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 20; -fx-max-width: 1200;">
+
+                <!-- Header -->
+                <VBox spacing="5">
+                    <Label text="Emergency Assistance" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <Label text="Get immediate help in emergency situations" 
+                           style="-fx-text-fill: #64748b; -fx-font-size: 16;"/>
+                </VBox>
+
+                <!-- Emergency Alert Card -->
+                <VBox maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    style="-fx-background-color: white; -fx-border-color: #dc2626; -fx-border-width: 2; -fx-background-radius: 10; -fx-padding: 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <VBox style="-fx-background-color: #fef2f2; -fx-padding: 20; -fx-background-radius: 10 10 0 0;">
+                      <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true">
+                            <Image url="@Icons/warning64.png"/>
+                        </ImageView>
+                        <Label text="Emergency SOS" style="-fx-text-fill: #dc2626; -fx-font-size: 18; -fx-font-weight: bold;"/>
+                      </HBox>
+                      <Label text="Press the button below to send an immediate alert to the nearest police station"
+                           style="-fx-text-fill: #dc2626; -fx-font-size: 14; -fx-padding: 5 0 0 0;"/>
+                    </VBox>
+
+                    <VBox style="-fx-padding: 30;" spacing="10">
+                      <Button onAction="#handleSOS"
+                            maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-height: 120;">
+                        <graphic>
+                            <VBox alignment="CENTER" spacing="8">
+                              <ImageView fitWidth="64" fitHeight="64" preserveRatio="true">
+                                <Image url="@Icons/warning64.png"/>
+                              </ImageView>
+                              <Label text="SEND SOS ALERT" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bolder;"/>
+                            </VBox>
+                        </graphic>
+                      </Button>
+
+                      <Label text="Your location will be automatically shared with emergency responders"
+                           style="-fx-text-fill: #6b7280; -fx-font-size: 12; -fx-alignment: CENTER;"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Current Location Card -->
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <VBox spacing="10">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                                <Image url="@Icons/map-pin.png"/>
+                            </ImageView>
+                            <Label text="Current Location" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        </HBox>
+                    </VBox>
+                    <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                        <VBox style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                            <Label text="Detected Location:" style="-fx-text-fill: #6b7280; -fx-font-size: 12;"/>
+                            <Label fx:id="locationLabel" text="Detecting location..." style="-fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 5 0 0 0;"/>
+                            <Button onAction="#handleUpdateLocation" text="Update Location" 
+                                   style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-font-size: 12; -fx-background-radius: 6; -fx-padding: 8 16; -fx-pref-width: 120;"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Emergency Contacts Card -->
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <VBox spacing="10">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                                <Image url="@Icons/phone.png"/>
+                            </ImageView>
+                            <Label text="Emergency Contacts" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        </HBox>
+                        <Label text="Quick access to emergency services" style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
+                    </VBox>
+                    
+                    <!-- Emergency Contacts as Information (not buttons) -->
+                    <VBox spacing="12" style="-fx-padding: 20 0 0 0;">
+                        <!-- Police Emergency -->
+                        <HBox spacing="15" style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                <Label text="Police Emergency" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="24/7 Emergency Hotline" style="-fx-text-fill: #6b7280; -fx-font-size: 12;"/>
+                            </VBox>
+                            <Label text="15" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                        </HBox>
+
+                        <!-- Rescue Services -->
+                       <HBox spacing="15" style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <Label text="Rescue Services" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            </VBox>
+                            <Label text="1122" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                        </HBox> 
+
+                        <!-- Women Safety Helpline -->
+                        <HBox spacing="15" style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                <Label text="Women Safety Helpline" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="24/7 Support for Women" style="-fx-text-fill: #6b7280; -fx-font-size: 12;"/>
+                            </VBox>
+                            <Label text="1043" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                        </HBox>
+
+                        <!-- Child Protection Helpline -->
+                        <HBox spacing="15" style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 8;">
+                            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                <Label text="Child Protection Helpline" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="Report child abuse" style="-fx-text-fill: #6b7280; -fx-font-size: 12;"/>
+                            </VBox>
+                            <Label text="1099" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

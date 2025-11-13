@@ -53,11 +53,36 @@ public class ComplaintController {
             showAlert("Navigation Error", "Could not load incident report: " + e.getMessage());
         }
     }
+    
+    @FXML
+    private void handleEmergency() {
+        try {
+            App.setRoot(Globals.FXML_EMERGENCY_ASSISTANCE);
+        } catch (Exception e) { 
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load emergency assistance: " + e.getMessage());
+        }
+    }
 
     @FXML
     private void handleComplaints() {
         // Already on this page
         System.out.println("Already on Complaints page");
+    }
+
+    @FXML
+    private void handleAssistance() {
+        handleEmergencyAssistance();
+    }
+
+    @FXML
+    private void handleEmergencyAssistance() {
+        try {
+            App.setRoot(Globals.FXML_EMERGENCY_ASSISTANCE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load emergency assistance: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -83,7 +108,7 @@ public class ComplaintController {
     @FXML
     private void handleLogout() {
         try {
-            App.setRoot("login");
+            App.setRoot(Globals.FXML_LOGIN);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Logout Error", "Could not logout: " + e.getMessage());

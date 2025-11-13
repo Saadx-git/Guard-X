@@ -24,7 +24,7 @@ public class IncidentReportController {
     @FXML
     private void handleDashboard() {
         try {
-            App.setRoot("civilian_dashboard_layout");
+            App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,10 +38,25 @@ public class IncidentReportController {
     @FXML
     private void handleComplaints() {
          try {
-            App.setRoot("complaint_form");
+            App.setRoot(Globals.FXML_COMPLAINT_FORM);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Navigation Error", "Could not load complaint form: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleAssistance() {
+        handleEmergencyAssistance();
+    }
+
+    @FXML
+    private void handleEmergencyAssistance() {
+        try {
+            App.setRoot(Globals.FXML_EMERGENCY_ASSISTANCE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load emergency assistance: " + e.getMessage());
         }
     }
 
@@ -68,7 +83,7 @@ public class IncidentReportController {
     @FXML
     private void handleLogout() {
         try {
-            App.setRoot("login");
+            App.setRoot(Globals.FXML_LOGIN);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,7 +6,8 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.effect.DropShadow?>
-
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <VBox xmlns="http://javafx.com/javafx/11.0.1" 
       xmlns:fx="http://javafx.com/fxml/1" 
       fx:controller="guardx.LoginController"
@@ -18,21 +19,23 @@
 
     <!-- Header Section -->
     <VBox alignment="CENTER" spacing="15">
-        <!-- Shield Icon -->
-        <StackPane>
-            <Circle radius="40" fill="#2563eb">
-                <effect>
-                    <DropShadow radius="10" color="rgba(37,99,235,0.5)"/>
-                </effect>
-            </Circle>
-            <Text fill="white" text="🛡️" style="-fx-font-size: 28;"/>
-        </StackPane>
-        
-        <!-- GuardX Title -->
-        <Text fill="white" style="-fx-font-size: 42; -fx-font-weight: bold;" text="GuardX"/>
-        
-        <!-- Subtitle -->
-        <Text fill="#bfdbfe" style="-fx-font-size: 16;" text="Law Enforcement Management System"/>
+    <!-- Shield Icon -->
+    <StackPane>
+        <Circle radius="40" fill="#2563eb">
+            <effect>
+                <DropShadow radius="10" color="rgba(37,99,235,0.5)"/>
+            </effect>
+        </Circle>
+        <ImageView fitWidth="32" fitHeight="32" preserveRatio="true">
+            <Image url="@Icons/guard.png"/>
+        </ImageView>
+    </StackPane>
+    
+    <!-- GuardX Title -->
+    <Text fill="white" style="-fx-font-size: 42; -fx-font-weight: bold;" text="GuardX"/>
+    
+    <!-- Subtitle -->
+    <Text fill="#bfdbfe" style="-fx-font-size: 16;" text="Law Enforcement Management System"/>
     </VBox>
 
     <!-- Main Login Card -->

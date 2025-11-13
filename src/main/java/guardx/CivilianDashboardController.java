@@ -28,6 +28,12 @@ public class CivilianDashboardController {
     }
 
     @FXML
+    private void handleAssistance() {
+        handleEmergencyAssistance();
+    }
+    
+
+    @FXML
     private void handleCases() {
         showAlert("My Cases", "Opening my cases...");
     }
@@ -51,7 +57,7 @@ public class CivilianDashboardController {
     private void handleLogout() {
         try {
             System.out.println("Logging out...");
-            App.setRoot("login");
+            App.setRoot(Globals.FXML_LOGIN);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to logout: " + e.getMessage());
@@ -81,7 +87,12 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleEmergencyAssistance() {
-        showAlert("Emergency Assistance", "Connecting to emergency services...");
+        try {
+            App.setRoot(Globals.FXML_EMERGENCY_ASSISTANCE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load emergency assistance: " + e.getMessage());
+        }
     }
 
     @FXML

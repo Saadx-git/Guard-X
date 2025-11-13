@@ -53,6 +53,15 @@
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleAssistance">
+                    <!-- Complaints icon -->
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/warning.png"/>
+                    </ImageView>
+                    <Label text="Emergency Assistance" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
                       onMouseClicked="#handleCases">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/analysis.png"/>
@@ -82,13 +91,7 @@
 
             <!-- Footer -->
             <VBox style="-fx-background-color: #0f172a; -fx-padding: 15;" spacing="5">
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
-                      onMouseClicked="#handleSettings">
-                    <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
-                        <Image url="@Icons/settings.png"/>
-                    </ImageView>
-                    <Label text="Settings" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
-                </HBox>
+            
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
                       onMouseClicked="#handleLogout">
                     <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
