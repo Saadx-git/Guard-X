@@ -69,7 +69,7 @@
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
-                      onMouseClicked="#handleCertificates">
+                      onMouseClicked="#handlePrintCertificate">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/stamp.png"/>
                     </ImageView>

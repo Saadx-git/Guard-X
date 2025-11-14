@@ -63,8 +63,13 @@ public class EmergencyAssistanceController {
     }
 
     @FXML
-    private void handleCertificates() {
-        showAlert("Certificates", "Opening certificates page...");
+    private void handlePrintCertificate() {
+        try {
+            App.setRoot(Globals.FXML_CERTIFICATE_FORM);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load certificate form: " + e.getMessage());
+        }
     }
 
     @FXML

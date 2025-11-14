@@ -9,8 +9,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
             xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="guardx.IncidentReportController"
-            stylesheets="@IncidentReportstyles.css">
+            fx:controller="guardx.CertificateController">
 
     <!-- Left Sidebar -->
     <left>
@@ -37,12 +36,12 @@
                     <Label text="Dashboard" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
                 
-                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
                       onMouseClicked="#handleIncidentReport">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/google-docs.png"/>
                     </ImageView>
-                    <Label text="Incident Report" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                    <Label text="Submit Report" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
@@ -54,8 +53,7 @@
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
-                      onMouseClicked="#handleAssistance">
-                    <!-- Complaints icon -->
+                      onMouseClicked="#handleEmergency">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/warning.png"/>
                     </ImageView>
@@ -63,19 +61,19 @@
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
-                      onMouseClicked="#handleTrackCase">
+                      onMouseClicked="#handleCases">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/analysis.png"/>
                     </ImageView>
                     <Label text="My Cases" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
-                      onMouseClicked="#handlePrintCertificate">
+                <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
+                      onMouseClicked="#handleCertificates">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/stamp.png"/>
                     </ImageView>
-                    <Label text="Certificates" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                    <Label text="Certificates" style="-fx-text-fill: white; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
@@ -110,100 +108,108 @@
 
                 <!-- Header -->
                 <VBox spacing="5">
-                    <Label text="Submit Incident Report" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                    <Label text="Provide detailed information about the incident you wish to report" 
+                    <Label text="Print Police Certificate" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    <Label text="Request and generate police clearance certificates" 
                            style="-fx-text-fill: #64748b; -fx-font-size: 16;"/>
                 </VBox>
 
-                <!-- Incident Report Form Card -->
+                <!-- Certificate Request Card -->
                 <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
                     <VBox spacing="10">
-                        <Label text="Incident Details" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                        <Label text="Fill out all required fields marked with an asterisk (*)" 
+                        <Label text="Certificate Request" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Select the type of certificate you need and provide required information" 
                                style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
                     </VBox>
 
                     <VBox spacing="20" style="-fx-padding: 20 0 0 0;">
-                        <!-- Incident Title -->
+                        <!-- Certificate Type -->
                         <VBox spacing="8">
                             <HBox spacing="5">
-                                <Label text="Incident Title" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="Certificate Type" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                                 <Text text="*" fill="red"/>
                             </HBox>
-                            <TextField fx:id="titleField" 
-                                      promptText="Brief title describing the incident"
-                                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            <ComboBox fx:id="certificateTypeCombo" 
+                                     promptText="Select certificate type"
+                                     style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                         </VBox>
 
-                        <!-- Date and Time -->
-                        <HBox spacing="15">
-                            <!-- Date -->
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <HBox spacing="5">
-                                    <Label text="Date of Incident" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                                    <Text text="*" fill="red"/>
-                                </HBox>
-                                <DatePicker fx:id="datePicker" 
-                                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
-                            </VBox>
-
-                            <!-- Time -->
-                            <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                <HBox spacing="5">
-                                    <Label text="Time of Incident" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                                    <Text text="*" fill="red"/>
-                                </HBox>
-                                <TextField fx:id="timeField" 
-                                          promptText="HH:MM (e.g., 14:30)"
+                        <!-- Purpose and CNIC -->
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            
+                            <VBox GridPane.columnIndex="0" spacing="8">
+                                <Label text="Purpose of Certificate" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <TextField fx:id="purposeField" 
+                                          promptText="e.g., Employment, Visa, etc."
                                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                             </VBox>
-                        </HBox>
+                            
+                            <VBox GridPane.columnIndex="1" spacing="8">
+                                <HBox spacing="5">
+                                    <Label text="CNIC Number" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                    <Text text="*" fill="red"/>
+                                </HBox>
+                                <TextField fx:id="cnicField" 
+                                          promptText="12345-1234567-1"
+                                          style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
+                            </VBox>
+                        </GridPane>
 
-                        <!-- Location -->
+                        <!-- Address -->
                         <VBox spacing="8">
                             <HBox spacing="5">
-                                <Label text="Location" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                                <Label text="Current Address" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                                 <Text text="*" fill="red"/>
                             </HBox>
-                            <TextField fx:id="locationField" 
-                                      promptText="Street address or location description"
+                            <TextField fx:id="addressField" 
+                                      promptText="Complete address"
                                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14;"/>
                         </VBox>
 
-                        <!-- Description -->
-                        <VBox spacing="8">
-                            <HBox spacing="5">
-                                <Label text="Detailed Description" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                                <Text text="*" fill="red"/>
-                            </HBox>
-                            <TextArea fx:id="descriptionArea" 
-                                     promptText="Provide a detailed description of what happened..."
-                                     style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 12; -fx-font-size: 14; -fx-pref-height: 150; -fx-wrap-text: true;"/>
-                        </VBox>
+                        <!-- Generate Button -->
+                        <Button onAction="#handleGenerate"
+        maxWidth="Infinity" HBox.hgrow="ALWAYS"
+        style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-height: 80;">
+    <graphic>
+        <VBox alignment="CENTER" spacing="8">
+            <ImageView fitWidth="32" fitHeight="32" preserveRatio="true">
+                <Image url="@Icons/stamp.png"/>
+            </ImageView>
+            <Label text="Generate Certificate" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+        </VBox>
+    </graphic>
+</Button>  
+                    </VBox>
+                </VBox>
 
-                        <!-- File Upload -->
-                        <VBox spacing="8">
-                            <Label text="Attachments (Images, Videos, Documents)" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                            <VBox style="-fx-border-color: #d1d5db; -fx-border-style: dashed; -fx-border-width: 2; -fx-border-radius: 8; -fx-padding: 30; -fx-alignment: CENTER; -fx-cursor: hand;"
-                                  onMouseClicked="#handleFileUpload">
-                                <ImageView fitWidth="32" fitHeight="32" preserveRatio="true">
-                                    <Image url="@Icons/upload.png"/>
-                                </ImageView>
-                                <Label text="Click to upload or drag and drop" style="-fx-font-size: 14; -fx-text-fill: #6b7280; -fx-padding: 5 0 0 0;"/>
-                                <Label text="PNG, JPG, PDF, or MP4 (max. 50MB)" style="-fx-font-size: 12; -fx-text-fill: #9ca3af;"/>
-                            </VBox>
-                        </VBox>
-
-                        <!-- Submit Buttons -->
-                        <HBox spacing="15" style="-fx-padding: 20 0 0 0;">
-                            <Button text="Submit Report" 
-                                   onAction="#handleSubmit"
-                                   style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 12 24; -fx-pref-width: 200;"
-                                   HBox.hgrow="ALWAYS"/>
-                            <Button text="Save as Draft" 
-                                   onAction="#handleSaveDraft"
-                                   style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-font-size: 14; -fx-background-radius: 8; -fx-padding: 12 24; -fx-pref-width: 150;"
-                                   HBox.hgrow="ALWAYS"/>
+                <!-- Information Card -->
+                <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <VBox spacing="10">
+                        <Label text="Important Information" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    </VBox>
+                    <VBox spacing="8" style="-fx-padding: 15 0 0 0;">
+                        <HBox spacing="10">
+                            <Text text="•" fill="#2563eb" style="-fx-font-weight: bold;"/>
+                            <Label text="Processing time: 3-5 business days" style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
+                        </HBox>
+                        <HBox spacing="10">
+                            <Text text="•" fill="#2563eb" style="-fx-font-weight: bold;"/>
+                            <Label text="Certificates are valid for 6 months from date of issue" style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
+                        </HBox>
+                        <HBox spacing="10">
+                            <Text text="•" fill="#2563eb" style="-fx-font-weight: bold;"/>
+                            <Label text="A verification code is included for authenticity checks" style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
+                        </HBox>
+                        <HBox spacing="10">
+                            <Text text="•" fill="#2563eb" style="-fx-font-weight: bold;"/>
+                            <Label text="You will receive a notification when your certificate is ready" style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
+                        </HBox>
+                        <HBox spacing="10">
+                            <Text text="•" fill="#2563eb" style="-fx-font-weight: bold;"/>
+                            <Label text="Bring original CNIC when collecting physical copy" style="-fx-text-fill: #6b7280; -fx-font-size: 14;"/>
                         </HBox>
                     </VBox>
                 </VBox>

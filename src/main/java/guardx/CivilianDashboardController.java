@@ -40,7 +40,7 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleCertificates() {
-        showAlert("Certificates", "Opening certificates...");
+        handlePrintCertificate();
     }
 
     @FXML
@@ -112,7 +112,12 @@ public class CivilianDashboardController {
 
     @FXML
     private void handlePrintCertificate() {
-        showAlert("Print Certificate", "Opening certificate request...");
+        try {
+            App.setRoot(Globals.FXML_CERTIFICATE_FORM);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load certificate form: " + e.getMessage());
+        }
     }
 
     private void showAlert(String title, String message) {
