@@ -62,7 +62,7 @@
                 </HBox>
 
                 <HBox alignment="CENTER_LEFT" style="-fx-background-color: #334155; -fx-padding: 12 15; -fx-cursor: hand;"
-                      onMouseClicked="#handleCases">
+                      onMouseClicked="#handleTrackCase">
                     <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
                         <Image url="@Icons/analysis.png"/>
                     </ImageView>

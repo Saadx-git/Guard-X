@@ -147,7 +147,7 @@ public class TrackCasesController {
     }
 
     @FXML
-    private void handleCases() {
+    private void handleTrackCase() {
         // Already on this page
         System.out.println("Already on My Cases page");
     }
