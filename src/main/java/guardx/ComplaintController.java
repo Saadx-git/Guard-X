@@ -86,8 +86,13 @@ public class ComplaintController {
     }
 
     @FXML
-    private void handleCases() {
-        showAlert("My Cases", "Opening my cases page...");
+    private void handleTrackCase() {
+         try {
+            App.setRoot(Globals.FXML_TRACK_CASES);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load track cases: " + e.getMessage());
+        }
     }
 
     @FXML

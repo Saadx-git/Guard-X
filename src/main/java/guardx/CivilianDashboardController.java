@@ -35,7 +35,7 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleCases() {
-        showAlert("My Cases", "Opening my cases...");
+        handleTrackCase();
     }
 
     @FXML
@@ -97,7 +97,12 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleTrackCase() {
-        showAlert("Track Case", "Opening case tracker...");
+         try {
+            App.setRoot(Globals.FXML_TRACK_CASES);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load track cases: " + e.getMessage());
+        }
     }
 
     @FXML
