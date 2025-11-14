@@ -164,7 +164,12 @@ public class TrackCasesController {
 
     @FXML
     private void handleProfile() {
-        showAlert("Profile", "Opening profile page...");
+        try {
+            App.setRoot(Globals.FXML_PROFILE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load profile management: " + e.getMessage());
+        }
     }
 
     @FXML

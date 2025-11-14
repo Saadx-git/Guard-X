@@ -45,7 +45,7 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleProfile() {
-        showAlert("Profile", "Opening profile management...");
+        handleManageProfile();
     }
 
     @FXML
@@ -107,7 +107,12 @@ public class CivilianDashboardController {
 
     @FXML
     private void handleManageProfile() {
-        showAlert("Manage Profile", "Opening profile management...");
+        try {
+            App.setRoot(Globals.FXML_PROFILE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load profile management: " + e.getMessage());
+        }
     }
 
     @FXML

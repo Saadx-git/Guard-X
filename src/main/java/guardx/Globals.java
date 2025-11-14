@@ -62,6 +62,7 @@ public class Globals {
     public static final String FXML_EMERGENCY_ASSISTANCE = "emergency_assistance";
     public static final String FXML_TRACK_CASES = "track_cases";
     public static final String FXML_CERTIFICATE_FORM = "certificate_form";
+    public static final String FXML_PROFILE = "profile_form";
     public static final String FXML_CIVILIAN_DASHBOARD = "civilian_dashboard_layout";
     public static final String FXML_OFFICER_DASHBOARD = "officer_dashboard";
     public static final String FXML_ADMIN_DASHBOARD = "admin_dashboard";
