@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="guardx.CaseDetailsPopupController"
+      spacing="20" alignment="TOP_CENTER"
+      style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 10;">
+
+    <Label text="Case Details"
+           style="-fx-font-size: 22; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="15" vgap="10">
+        <Label text="Case ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label fx:id="lblCaseId" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label fx:id="lblType" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <Label fx:id="lblStatus" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Priority:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <Label fx:id="lblPriority" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Date:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <Label fx:id="lblDate" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button fx:id="btnAccept" text="Accept"
+                style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
+        <Button fx:id="btnDelete" text="Delete"
+                style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
+        <Button fx:id="btnClose" text="Close"
+                style="-fx-background-color: #475569; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+
+</VBox>

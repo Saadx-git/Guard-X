@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="guardx.OfficerDashboardController"
+            prefWidth="1100" prefHeight="800">
+    <left>
+        <fx:include source="officer_sidebar.fxml"/>
+    </left>
+    <!-- ====== MAIN CONTENT ====== -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-padding: 20;">
+            <VBox spacing="20">
+
+                <!-- Welcome Section -->
+                <VBox spacing="5" style="-fx-background-color: linear-gradient(to right, #0f172a, #1e293b);
+                                        -fx-padding: 20; -fx-background-radius: 10;">
+                    <Label fx:id="welcomeLabel"
+                           text="Welcome, Officer!"
+                           style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;" />
+
+                    <Label text="Officer Dashboard - Monitor cases, validate reports, and manage assignments"
+                           style="-fx-text-fill: #cbd5e1; -fx-font-size: 14;" />
+                </VBox>
+
+                <!-- Statistics Grid -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+
+                    <children>
+
+                        <!-- Total Reports -->
+                        <VBox GridPane.columnIndex="0"
+                            style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
+                                    -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
+                            <Label text="Total Reports" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
+                            <Label fx:id="totalReports" text="156"
+                                style="-fx-font-size: 32; -fx-font-weight: bold;" />
+                            <Label text="+12 this week" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
+                        </VBox>
+
+                        <!-- Open Cases -->
+                        <VBox GridPane.columnIndex="1"
+                            style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
+                                    -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
+                            <Label text="Open Cases" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
+                            <Label fx:id="openCases" text="42"
+                                style="-fx-font-size: 32; -fx-font-weight: bold;" />
+                            <Label text="8 require attention" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
+                        </VBox>
+
+                        <!-- Complaints Pending -->
+                        <VBox GridPane.columnIndex="2"
+                            style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
+                                    -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
+                            <Label text="Complaints Pending" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
+                            <Label fx:id="pendingComplaints" text="18"
+                                style="-fx-font-size: 32; -fx-font-weight: bold;" />
+                            <Label text="+3 new" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
+                        </VBox>
+
+                        <!-- Resolved Cases -->
+                        <VBox GridPane.columnIndex="3"
+                            style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
+                                    -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
+                            <Label text="Resolved Cases" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
+                            <Label fx:id="resolvedCases" text="234"
+                                style="-fx-font-size: 32; -fx-font-weight: bold;" />
+                            <Label text="+15 this month" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
+                        </VBox>
+
+                    </children>
+                </GridPane>
+
+                <!-- Quick Actions -->
+                <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, #00000011, 6, 0, 0, 1);">
+                    <Label text="Quick Actions" style="-fx-font-size: 25; -fx-font-weight: bold;"/>
+                    <Label text="Frequently used operations" style="-fx-text-fill: #64748b; -fx-font-size: 18;"/>
+
+                    <HBox spacing="20" alignment="CENTER" style="-fx-padding: 15 0;">
+                        <!-- Card Template -->
+                        <VBox fx:id="reportCard" alignment="CENTER" spacing="8"
+                            style="-fx-background-color: #f9fafb; -fx-background-radius: 12; -fx-padding: 20; -fx-cursor: hand;"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                            onMouseClicked="#goToReports">
+                            <ImageView fitWidth="32" fitHeight="32">
+                                <Image url="@Icons/google-docs.png"/>
+                            </ImageView>
+                            <Label text="View Reports" style="-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: #1e293b;"/>
+                            <Label text="Check all reports" style="-fx-font-size: 15; -fx-text-fill: #64748b;"/>
+                        </VBox>
+
+                        <VBox fx:id="assignCard" alignment="CENTER" spacing="8"
+                            style="-fx-background-color: #f9fafb; -fx-background-radius: 12; -fx-padding: 20; -fx-cursor: hand;"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                            onMouseClicked="#goToAssign">
+                            <ImageView fitWidth="32" fitHeight="32">
+                                <Image url="@Icons/pending.png"/>
+                            </ImageView>
+                            <Label text="Assign Officer" style="-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: #1e293b;"/>
+                            <Label text="Manage assignments" style="-fx-font-size: 15; -fx-text-fill: #64748b;"/>
+                        </VBox>
+
+                        <VBox fx:id="casesCard" alignment="CENTER" spacing="8"
+                            style="-fx-background-color: #f9fafb; -fx-background-radius: 12; -fx-padding: 20; -fx-cursor: hand;"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                            onMouseClicked="#goToCases">
+                            <ImageView fitWidth="32" fitHeight="32">
+                                <Image url="@Icons/File.png"/>
+                            </ImageView>
+                            <Label text="Update Status" style="-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: #1e293b;"/>
+                            <Label text="Update case progress" style="-fx-font-size: 15; -fx-text-fill: #64748b;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Recent Cases Table -->
+                <VBox spacing="10">
+                    <Label text="Latest Assigned Cases" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+                    <Label text="Your most recent assignments" style="-fx-text-fill: #64748b;"/>
+
+                    <TableView fx:id="recentCasesTable" prefHeight="400">
+                        <columns>
+                            <TableColumn text="Case ID" fx:id="colCaseId" prefWidth="100"/>
+                            <TableColumn text="Type" fx:id="colType" prefWidth="200"/>
+                            <TableColumn text="Status" fx:id="colStatus" prefWidth="120"/>
+                            <TableColumn text="Priority" fx:id="colPriority" prefWidth="120"/>
+                            <TableColumn text="Date" fx:id="colDate" prefWidth="150"/>
+                            <TableColumn text="Action" fx:id="colAction" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

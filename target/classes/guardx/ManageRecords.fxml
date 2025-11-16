@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.ManageRecordsController">
+
+    <!-- Sidebar -->
+    <left>
+        <fx:include source="officer_sidebar.fxml"/>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="15" style="-fx-padding: 15;">
+
+            <!-- Title -->
+            <VBox spacing="5">
+                <Label text="Manage Records">
+                    <font>
+                        <Font size="24"/>
+                    </font>
+                </Label>
+                <Label text="Search, filter, and export incident and complaint records" style="-fx-text-fill: gray;"/>
+            </VBox>
+
+            <!-- Search Section -->
+            <VBox spacing="10">
+                <HBox spacing="10">
+                    <TextField fx:id="searchField" promptText="Search by Case ID or Civilian Name..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" fx:id="searchButton"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <!-- Record Type -->
+                    <VBox spacing="5">
+                        <Label text="Record Type"/>
+                        <ComboBox fx:id="typeComboBox" promptText="All Types"/>
+                    </VBox>
+
+                    <!-- Status -->
+                    <VBox spacing="5">
+                        <Label text="Status"/>
+                        <ComboBox fx:id="statusComboBox" promptText="All Status"/>
+                    </VBox>
+
+                    <!-- Date -->
+                    <VBox spacing="5">
+                        <Label text="Date Range"/>
+                        <DatePicker fx:id="datePicker"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Export Buttons -->
+            <HBox spacing="10">
+                <Button text="Export as CSV" fx:id="exportCsv"/>
+                <Button text="Export as PDF" fx:id="exportPdf"/>
+                <Button text="Export as Excel" fx:id="exportExcel"/>
+            </HBox>
+
+            <!-- Table Section -->
+            <TableView fx:id="recordsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" text="Record ID" prefWidth="100"/>
+                    <TableColumn fx:id="colType" text="Type" prefWidth="150"/>
+                    <TableColumn fx:id="colCivilian" text="Civilian" prefWidth="150"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="100"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                    <TableColumn fx:id="colOfficer" text="Officer" prefWidth="150"/>
+                    <TableColumn fx:id="colActions" text="Actions" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </center>
+
+</BorderPane>

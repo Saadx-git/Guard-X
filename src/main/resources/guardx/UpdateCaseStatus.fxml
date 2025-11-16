@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.UpdateCaseStatusController"
+            style="-fx-background-color: #f3f4f6;">
+
+    <!-- Left Sidebar -->
+    <left>
+        <fx:include source="officer_sidebar.fxml"/>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="15" style="-fx-padding: 20;">
+
+            <!-- Header -->
+            <VBox spacing="5">
+                <Label text="Update Case Status" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                <Label text="Manage and update the status of assigned cases" style="-fx-text-fill: gray;"/>
+            </VBox>
+
+            <!-- Status Overview Cards -->
+            <HBox spacing="10">
+                <VBox fx:id="pendingCard" style="
+                        -fx-background-color: linear-gradient(to bottom, #fef3c7, #fde68a);
+                        -fx-padding: 15; 
+                        -fx-border-radius: 8; 
+                        -fx-background-radius: 8; 
+                        -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);" 
+                    HBox.hgrow="ALWAYS">
+                    <Label text="Pending" style="-fx-text-fill: #b45309; -fx-font-weight: bold;"/>
+                    <Label fx:id="pendingCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox fx:id="investigatingCard" style="
+                        -fx-background-color: linear-gradient(to bottom, #bfdbfe, #60a5fa);
+                        -fx-padding: 15; 
+                        -fx-border-radius: 8; 
+                        -fx-background-radius: 8; 
+                        -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);" 
+                    HBox.hgrow="ALWAYS">
+                    <Label text="Investigating" style="-fx-text-fill: #1e40af; -fx-font-weight: bold;"/>
+                    <Label fx:id="investigatingCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox fx:id="resolvedCard" style="
+                        -fx-background-color: linear-gradient(to bottom, #bbf7d0, #34d399);
+                        -fx-padding: 15; 
+                        -fx-border-radius: 8; 
+                        -fx-background-radius: 8; 
+                        -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);" 
+                    HBox.hgrow="ALWAYS">
+                    <Label text="Resolved" style="-fx-text-fill: #065f46; -fx-font-weight: bold;"/>
+                    <Label fx:id="resolvedCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox fx:id="closedCard" style="
+                        -fx-background-color: linear-gradient(to bottom, #e0e7ff, #818cf8);
+                        -fx-padding: 15; 
+                        -fx-border-radius: 8; 
+                        -fx-background-radius: 8; 
+                        -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);" 
+                    HBox.hgrow="ALWAYS">
+                    <Label text="Closed" style="-fx-text-fill: #4338ca; -fx-font-weight: bold;"/>
+                    <Label fx:id="closedCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Cases Table -->
+            <TableView fx:id="casesTable" prefHeight="300">
+                <columns>
+                    <TableColumn text="Case ID" fx:id="colId" prefWidth="100"/>
+                    <TableColumn text="Type" fx:id="colType" prefWidth="200"/>
+                    <TableColumn text="Officer" fx:id="colOfficer" prefWidth="150"/>
+                    <TableColumn text="Priority" fx:id="colPriority" prefWidth="100"/>
+                    <TableColumn text="Current Status" fx:id="colStatus" prefWidth="150"/>
+                    <TableColumn text="Update Status" fx:id="colUpdate" prefWidth="150"/>
+                    <TableColumn text="Last Update" fx:id="colLastUpdate" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <!-- Bulk Actions -->
+            <HBox spacing="10">
+                <Button fx:id="refreshButton" text="Refresh All" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+                <Button fx:id="exportButton" text="Export Report" style="-fx-background-color: #16a34a; -fx-text-fill: white;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

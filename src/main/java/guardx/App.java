@@ -20,8 +20,8 @@ public class App extends Application {
             Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
             
             javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-            double screenWidth = screenBounds.getWidth();
-            double screenHeight = screenBounds.getHeight();
+            double screenWidth = screenBounds.getWidth()-100;
+            double screenHeight = screenBounds.getHeight()-100;
             
             System.out.println("Screen dimensions: " + screenWidth + "x" + screenHeight);
             

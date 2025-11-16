@@ -64,9 +64,13 @@ public class Globals {
     public static final String FXML_CERTIFICATE_FORM = "certificate_form";
     public static final String FXML_PROFILE = "profile_form";
     public static final String FXML_CIVILIAN_DASHBOARD = "civilian_dashboard_layout";
-    public static final String FXML_OFFICER_DASHBOARD = "officer_dashboard";
+    public static final String FXML_OFFICER_DASHBOARD = "OfficerDashboard";
     public static final String FXML_ADMIN_DASHBOARD = "admin_dashboard";
+
     
+
+    public static final String FXML_ASSIGN_OFFICER = "AssignOfficer";
+
     // API Endpoints (if needed later)
     //public static final String API_BASE_URL = "http://localhost:8080/api";
     //public static final String LOGIN_ENDPOINT = "/auth/login";

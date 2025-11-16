@@ -1,7 +1,10 @@
 package guardx;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 
 public class LoginController {
     
@@ -21,15 +24,9 @@ public class LoginController {
     private void handleCivilianLogin() {
         String email = civilianEmail.getText();
         String password = civilianPassword.getText();
-        
-        //login(email, password, "civilian");
 
-        //if (!email.isEmpty() && !password.isEmpty()) {
-            System.out.println("Civilian login attempt: " + email);
-            login(email, password, "civilian");
-        //} else {
-        //    showAlert("Error", "Please enter both email and password.");
-        //}
+        System.out.println("Civilian login attempt: " + email);
+        login(email, password, "civilian");
     }
     
     @FXML
@@ -39,7 +36,7 @@ public class LoginController {
         
         if (!email.isEmpty() && !password.isEmpty()) {
             System.out.println("Officer login attempt: " + email);
-            login(email, password, "officer");
+            login(email, password, "officer");  // Pass lowercase "officer"
         } else {
             showAlert("Error", "Please enter both email and password.");
         }
@@ -55,24 +52,25 @@ public class LoginController {
         showAlert("Registration", "Please visit your local police station to register for an account.");
     }
     
-    private void login(String email, String password, String role) {
-    //if (!email.isEmpty() && !password.isEmpty()) {
-        System.out.println("Login: " + email + " | Role: " + role);
-        
-        try {
-            if ("civilian".equals(role)) {
-                App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD); // This should now be "civilian_dashboard_layout"
-            } else {
-                App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD); // Use same for now
-            }
-        } catch (Exception e) {
-            System.out.println("❌ Navigation Error: " + e.getMessage());
-            e.printStackTrace();
+  private void login(String email, String password, String role) {
+    System.out.println("Login: " + email + " | Role: " + role);
+    
+    try {
+        if ("civilian".equalsIgnoreCase(role)) {
+            App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD);
+        } 
+        else if ("officer".equalsIgnoreCase(role)) { // use lowercase or ignore case
+            App.setRoot(Globals.FXML_OFFICER_DASHBOARD);
         }
-    //} else {
-    //    showAlert("Error", "Please enter both email and password.");
-    //}
+        else {
+            App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD);
+        }
+    } catch (Exception e) {
+        System.out.println("❌ Navigation Error: " + e.getMessage());
+        e.printStackTrace();
+    }
 }
+
     
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

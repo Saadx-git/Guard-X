@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.AssignOfficerController"
+            prefWidth="900" prefHeight="650">
+
+    <!-- Sidebar -->
+    <left>
+        <fx:include source="officer_sidebar.fxml"/>
+    </left>
+
+    <!-- Main content -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent;">
+            <VBox spacing="20">
+                
+            <VBox spacing="20" alignment="CENTER" 
+                style="-fx-background-color: #ffffff; -fx-background-radius: 16; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 10, 0, 0, 4);"
+                prefWidth="800">
+
+                <!-- First row: Case + Officer -->
+                <HBox spacing="20" HBox.hgrow="ALWAYS">
+                    <!-- Case ComboBox -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Select Case" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                        <ComboBox fx:id="caseComboBox" promptText="Choose a case..."
+                                style="-fx-font-size: 14; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-padding: 6 10 6 10;"
+                                maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Officer ComboBox -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Select Officer" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                        <ComboBox fx:id="officerComboBox" promptText="Choose an officer..."
+                                style="-fx-font-size: 14; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-padding: 6 10 6 10;"
+                                maxWidth="Infinity"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Second row: Priority (full width) -->
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Priority" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                    <ComboBox fx:id="priorityComboBox" promptText="Select priority..."
+                            style="-fx-font-size: 14; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-padding: 6 10 6 10;"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Third row: Notes (full width, taller) -->
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Notes" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                    <TextArea fx:id="notesTextArea" promptText="Enter notes here..."
+                            wrapText="true"
+                            prefRowCount="8"
+                            style="-fx-font-size: 14; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-padding: 10;"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Fourth row: Assign Button -->
+                <HBox alignment="CENTER">
+                    <Button fx:id="assignButton" text="Assign Officer" prefWidth="180"
+                            style="-fx-font-size: 16; -fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20 10 20;"/>
+                </HBox>
+
+            </VBox>
+
+
+                <!-- Officer Availability Card -->
+                <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, #00000011, 6, 0, 0, 2);">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <Label text="Officer Availability" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                    <VBox fx:id="availabilityContainer" spacing="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                    </VBox>
+                </VBox>
+
+                <!-- Recent Assignments Card -->
+                <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, #00000011, 6, 0, 0, 2);">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <Label text="Recent Assignments" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                    <VBox fx:id="recentAssignmentsContainer" spacing="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

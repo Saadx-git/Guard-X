@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.ViewValidateReportsController"
+            prefWidth="900" prefHeight="600">
+
+    <!-- Left Sidebar -->
+    <left>
+        <fx:include source="officer_sidebar.fxml"/>
+    </left>
+
+    <!-- Center Content -->
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Header inside center -->
+            <VBox spacing="5">
+                <Label text="View and Validate Reports">
+                    <font>
+                        <Font size="24"/>
+                    </font>
+                </Label>
+                <Label text="Review and validate submitted reports and complaints"/>
+            </VBox>
+
+            <!-- Filters Card -->
+            <TitledPane text="Filters">
+                <VBox spacing="10">
+                    <HBox spacing="15">
+                        <VBox spacing="5">
+                            <Label text="Status"/>
+                            <ComboBox fx:id="statusFilter"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Date Range"/>
+                            <DatePicker fx:id="dateFilter"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Civilian Name"/>
+                            <TextField fx:id="civilianFilter" promptText="Search by name..."/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </TitledPane>
+
+            <!-- Tabs for Reports and Complaints -->
+            <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Incident Reports">
+                    <VBox spacing="10">
+                        <TableView fx:id="reportsTable" prefHeight="200">
+                            <columns>
+                                <TableColumn text="ID" fx:id="colReportID"/>
+                                <TableColumn text="Civilian" fx:id="colReportCivilian"/>
+                                <TableColumn text="Type" fx:id="colReportType"/>
+                                <TableColumn text="Date" fx:id="colReportDate"/>
+                                <TableColumn text="Status" fx:id="colReportStatus"/>
+                                <TableColumn text="Actions" fx:id="colReportActions"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <Tab text="Complaints">
+                    <VBox spacing="10">
+                        <TableView fx:id="complaintsTable" prefHeight="200">
+                            <columns>
+                                <TableColumn text="ID" fx:id="colComplaintID"/>
+                                <TableColumn text="Civilian" fx:id="colComplaintCivilian"/>
+                                <TableColumn text="Type" fx:id="colComplaintType"/>
+                                <TableColumn text="Date" fx:id="colComplaintDate"/>
+                                <TableColumn text="Status" fx:id="colComplaintStatus"/>
+                                <TableColumn text="Actions" fx:id="colComplaintActions"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </center>
+</BorderPane>

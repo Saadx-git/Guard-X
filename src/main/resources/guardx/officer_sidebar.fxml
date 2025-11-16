@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="guardx.OfficerSidebarController"
+            prefWidth="250"
+            style="-fx-background-color: #1e293b;">
+
+    <!-- Full height VBox inside AnchorPane -->
+    <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+          spacing="0">
+
+        <!-- Header -->
+        <VBox style="-fx-background-color: #0f172a; -fx-padding: 20;" alignment="CENTER">
+            <StackPane>
+                <Circle radius="25" fill="#2563eb"/>
+                <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                    <Image url="@Icons/guard.png"/>
+                </ImageView>
+            </StackPane>
+            <Label text="GuardX" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+            <Label text="Law Enforcement System" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
+        </VBox>
+
+        <!-- Scrollable Navigation -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;">
+            <VBox style="-fx-padding: 20 0;" spacing="5">
+
+                <!-- Dashboard -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="dashboardBtn" onMouseClicked="#handleDashboard">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/dashboard.png"/>
+                    </ImageView>
+                    <Label text="Dashboard" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Reports -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="reportsBtn" onMouseClicked="#handleReports">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/google-docs.png"/>
+                    </ImageView>
+                    <Label text="Reports And Complaint" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Complaints -->
+                
+
+                <!-- Cases -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="casesBtn" onMouseClicked="#handleCases">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/analysis.png"/>
+                    </ImageView>
+                    <Label text="Cases" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Assign Officer -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="assignBtn" onMouseClicked="#handleAssignOfficer">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/police-officer.png"/>
+                    </ImageView>
+                    <Label text="Assign Officer" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Records -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="recordsBtn" onMouseClicked="#handleRecords">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/database.png"/>
+                    </ImageView>
+                    <Label text="Records" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Track Progress -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="progressBtn" onMouseClicked="#handleProgress">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/clipboard.png"/>
+                    </ImageView>
+                    <Label text="Track Progress" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+                <!-- Search Records -->
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
+                      fx:id="searchBtn" onMouseClicked="#handleSearch">
+                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
+                        <Image url="@Icons/search.png"/>
+                    </ImageView>
+                    <Label text="Search Records" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- Footer -->
+        <VBox style="-fx-background-color: #0f172a; -fx-padding: 15;" spacing="5">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
+                  fx:id="logoutBtn" onMouseClicked="#handleLogout">
+                <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
+                    <Image url="@Icons/logout.png"/>
+                </ImageView>
+                <Label text="Logout" style="-fx-text-fill: #94a3b8; -fx-font-size: 12; -fx-padding: 0 0 0 8;"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>
