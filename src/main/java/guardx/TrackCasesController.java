@@ -100,38 +100,44 @@ public class TrackCasesController {
     }
 
     private void loadCasesFromDatabase() {
-        String currentUserId = getCurrentUserId();
-        if (currentUserId == null) {
-            showAlert("Error", "Please log in to view your cases.");
-            return;
-        }
-
-        CompletableFuture<JSONArray> future = supabaseService.getUserCases(currentUserId);
-        
-        future.thenAccept(casesArray -> {
-            javafx.application.Platform.runLater(() -> {
-                cases.clear();
-                if (casesArray != null && casesArray.length() > 0) {
-                    for (int i = 0; i < casesArray.length(); i++) {
-                        JSONObject caseObj = casesArray.getJSONObject(i);
-                        Case caseItem = createCaseFromJSON(caseObj);
-                        cases.add(caseItem);
-                    }
-                    filteredCases.setAll(cases);
-                    System.out.println("✅ Loaded " + cases.size() + " cases from database");
-                } else {
-                    System.out.println("ℹ️ No cases found for user");
-                    showAlert("No Cases", "You don't have any cases yet.");
-                }
-            });
-        }).exceptionally(e -> {
-            javafx.application.Platform.runLater(() -> {
-                System.err.println("❌ Error loading cases: " + e.getMessage());
-                showAlert("Error", "Failed to load cases. Please try again.");
-            });
-            return null;
-        });
+    String currentUserId = getCurrentUserId();
+    if (currentUserId == null) {
+        showAlert("Error", "Please log in to view your cases.");
+        return;
     }
+
+    System.out.println("👤 Current User ID: " + currentUserId);
+
+    // First, let's debug by checking ALL cases
+    CompletableFuture<JSONArray> allCasesFuture = supabaseService.getAllCases();
+    
+    allCasesFuture.thenCompose(allCases -> {
+        // Now get user-specific cases
+        return supabaseService.getUserCases(currentUserId);
+    }).thenAccept(userCases -> {
+        javafx.application.Platform.runLater(() -> {
+            cases.clear();
+            if (userCases != null && userCases.length() > 0) {
+                for (int i = 0; i < userCases.length(); i++) {
+                    JSONObject caseObj = userCases.getJSONObject(i);
+                    Case caseItem = createCaseFromJSON(caseObj);
+                    cases.add(caseItem);
+                }
+                filteredCases.setAll(cases);
+                System.out.println("✅ Successfully loaded " + cases.size() + " cases for display");
+            } else {
+                System.out.println("ℹ️ No cases found for current user");
+                showAlert("No Cases", "You don't have any cases yet. Submit an incident report or complaint to create a case.");
+            }
+        });
+    }).exceptionally(e -> {
+        javafx.application.Platform.runLater(() -> {
+            System.err.println("❌ Error in case loading process: " + e.getMessage());
+            showAlert("Error", "Failed to load cases. Please try again.");
+        });
+        return null;
+    });
+}
 
     private Case createCaseFromJSON(JSONObject caseObj) {
         String id = caseObj.optString("id", "N/A").substring(0, 8); // Shorten UUID

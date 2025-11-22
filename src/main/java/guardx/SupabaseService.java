@@ -224,14 +224,65 @@ public CompletableFuture<Boolean> saveComplaint(
             });
 }
 
-/**
- * Gets cases for a specific user (where user is the complainant)
- */
+//Gets cases for a specific user (where user is the complainant)
 public CompletableFuture<JSONArray> getUserCases(String userId) {
+    System.out.println("🔍 Fetching cases for user ID: " + userId);
+    
+    // Use the correct field name 'creator' from your schema
     String filter = "?creator=eq." + userId + "&select=*";
 
+    String url = SUPABASE_URL + "cases" + filter;
+    System.out.println("🌐 Request URL: " + url);
+
     HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(SUPABASE_URL + "cases" + filter))
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+            System.out.println(request.toString());
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                System.out.println("📡 HTTP Status Code: " + response.statusCode());
+                System.out.println("📡 Response Body: " + response.body());
+                
+                if (response.statusCode() == 200) {
+                    JSONArray cases = new JSONArray(response.body());
+                    System.out.println("✅ Found " + cases.length() + " cases for user " + userId);
+                    
+                    // Debug: Print each case found
+                    for (int i = 0; i < cases.length(); i++) {
+                        JSONObject caseObj = cases.getJSONObject(i);
+                        System.out.println("📄 Case " + (i+1) + ": " + caseObj.toString());
+                    }
+                    
+                    return cases;
+                } else {
+                    System.err.println("❌ Error fetching cases. Status: " + response.statusCode());
+                    System.err.println("❌ Error response: " + response.body());
+                    return new JSONArray();
+                }
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching cases: " + e.getMessage());
+                e.printStackTrace();
+                return new JSONArray();
+            });
+}
+
+/**
+ * Debug method to check ALL cases in the database
+ */
+public CompletableFuture<JSONArray> getAllCases() {
+    System.out.println("🔍 Fetching ALL cases from database");
+    
+    String url = SUPABASE_URL + "cases?select=*";
+    System.out.println("🌐 Request URL: " + url);
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
             .header("apikey", SUPABASE_ANON_KEY)
             .header("Content-Type", "application/json")
             .GET()
@@ -239,15 +290,25 @@ public CompletableFuture<JSONArray> getUserCases(String userId) {
 
     return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply(response -> {
+                System.out.println("📡 ALL Cases - HTTP Status: " + response.statusCode());
                 if (response.statusCode() == 200) {
-                    return new JSONArray(response.body());
-                } else {
-                    System.err.println("❌ Error fetching cases: " + response.statusCode());
-                    return new JSONArray();
+                    JSONArray allCases = new JSONArray(response.body());
+                    System.out.println("📊 Total cases in database: " + allCases.length());
+                    
+                    // Print all cases for debugging
+                    for (int i = 0; i < allCases.length(); i++) {
+                        JSONObject caseObj = allCases.getJSONObject(i);
+                        System.out.println("📋 Case " + (i+1) + " - ID: " + caseObj.getString("id") + 
+                                          ", Creator: " + caseObj.getString("creator") + 
+                                          ", Title: " + caseObj.getString("title"));
+                    }
+                    
+                    return allCases;
                 }
+                return new JSONArray();
             })
             .exceptionally(e -> {
-                System.err.println("❌ Exception fetching cases: " + e.getMessage());
+                System.err.println("❌ Error fetching all cases: " + e.getMessage());
                 return new JSONArray();
             });
 }
