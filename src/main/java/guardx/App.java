@@ -16,6 +16,7 @@ public class App extends Application {
         try {
             System.out.println("🚀 Starting " + Globals.APP_NAME + " Application...");
             AuthStage = stage;
+            System.out.println("Loading Login FXML...");    
 
             Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
             
