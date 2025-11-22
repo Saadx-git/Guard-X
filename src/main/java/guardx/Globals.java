@@ -74,6 +74,29 @@ public class Globals {
 
     public static final String FXML_ASSIGN_OFFICER = "AssignOfficer";
 
+
+
+    public static String current_user_id = "";
+    public static String current_user_name = "";
+    public static String current_user_role = "";
+    public static String current_user_email = "";
+    public static String current_user_cnic = "";
+    public static String current_user_address = "";
+    public static String current_user_phone = "";
+    public static String current_user_badge_number = "";
+
+    public static void clearUserSession() {
+    current_user_id = "";
+    current_user_name = "";
+    current_user_email = "";
+    current_user_phone = "";
+    current_user_address = "";
+    current_user_cnic = "";
+    current_user_badge_number = "";
+    current_user_role = "";
+}
+
+
     // API Endpoints (if needed later)
     //public static final String API_BASE_URL = "http://localhost:8080/api";
     //public static final String LOGIN_ENDPOINT = "/auth/login";

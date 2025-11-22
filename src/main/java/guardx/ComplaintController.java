@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import java.time.LocalDate;
+import java.util.concurrent.CompletableFuture;
 
 public class ComplaintController {
 
@@ -15,6 +16,8 @@ public class ComplaintController {
     @FXML private TextField locationField;
     @FXML private TextArea descriptionArea;
     @FXML private TextArea witnessesArea;
+
+    private final SupabaseService supabaseService = new SupabaseService();
 
     @FXML
     public void initialize() {
@@ -126,10 +129,11 @@ public class ComplaintController {
     }
 
     // Form handlers
+    // Form handlers - UPDATE
     @FXML
     private void handleSubmitComplaint() {
         if (validateForm()) {
-            showConfirmationDialog();
+            saveComplaintToDatabase();
         }
     }
 
@@ -163,6 +167,54 @@ public class ComplaintController {
         return true;
     }
 
+    private void saveComplaintToDatabase() {
+    String complaintType = complaintTypeCombo.getValue();
+    LocalDate dateOfIncident = incidentDatePicker.getValue();
+    String location = locationField.getText().trim();
+    String description = descriptionArea.getText().trim();
+    String witnessInformation = witnessesArea.getText().trim();
+    String officerName = officerNameField.getText().trim();
+    String badgeNumber = badgeNumberField.getText().trim();
+    String relatedCase = relatedCaseField.getText().trim();
+
+    // Get current user ID from session
+    String currentUserId = getCurrentUserId();
+
+    // Use SupabaseService to save the complaint with user_id
+    CompletableFuture<Boolean> future = supabaseService.saveComplaint(
+        complaintType, 
+        dateOfIncident, 
+        location, 
+        description, 
+        witnessInformation,
+        officerName,
+        badgeNumber, 
+        relatedCase,
+        currentUserId
+    );
+    
+    future.thenAccept(success -> {
+        if (success) {
+            javafx.application.Platform.runLater(() -> {
+                showConfirmationDialog();
+            });
+        } else {
+            javafx.application.Platform.runLater(() -> {
+                showAlert("Submission Failed", "Failed to submit complaint. Please try again.");
+            });
+        }
+    });
+}
+
+private String getCurrentUserId() {
+    // Get the current user ID from your session management
+    // This depends on how you're storing the logged-in user
+    if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
+        return Globals.current_user_id;
+    }
+    return null; // Or handle this case appropriately
+}
+
     private void showConfirmationDialog() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Complaint Submitted Successfully");
@@ -170,12 +222,12 @@ public class ComplaintController {
         alert.setContentText("Your complaint has been submitted and assigned complaint ID #COMP789.\n\n" +
                            "The internal affairs department will review your complaint and you will be " +
                            "notified of any updates via email.");
-        
+
         alert.showAndWait();
-        
+
         // Clear form after successful submission
         clearForm();
-        
+
         // Navigate back to dashboard
         try {
             App.setRoot("civilian_dashboard_layout");
@@ -201,5 +253,5 @@ public class ComplaintController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
+        }
 }

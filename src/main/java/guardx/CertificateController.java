@@ -23,11 +23,7 @@ public class CertificateController {
 
     private void setupCertificateTypes() {
         certificateTypeCombo.getItems().addAll(
-            "Police Clearance Certificate",
-            "Character Certificate", 
-            "No Objection Certificate (NOC)",
-            "Incident Report Certificate",
-            "FIR Copy"
+            "Character Certificate"
         );
     }
 
@@ -145,6 +141,17 @@ public class CertificateController {
         alert.showAndWait();
     }
 
+    private String GetCurrentDate() {
+        java.time.LocalDate currentDate = java.time.LocalDate.now();
+        return currentDate.toString();
+    }
+
+    private String GetExpiryDate() {
+        java.time.LocalDate currentDate = java.time.LocalDate.now();
+        java.time.LocalDate expiryDate = currentDate.plusYears(1);
+        return expiryDate.toString();
+    }
+
     private VBox createCertificateContent() {
         VBox content = new VBox(20);
         content.setStyle("-fx-background-color: white; -fx-padding: 30; -fx-border-color: #d1d5db; -fx-border-width: 1; -fx-border-radius: 8;");
@@ -175,12 +182,12 @@ public class CertificateController {
         details.setStyle("-fx-padding: 30 0; -fx-border-color: #d1d5db; -fx-border-width: 1 0 0 0;");
         
         details.getChildren().addAll(
-            createDetailRow("Name:", "John Doe"),
+            createDetailRow("Name:", Globals.current_user_name),
             createDetailRow("CNIC:", cnicField.getText()),
             createDetailRow("Address:", addressField.getText()),
             createDetailRow("Purpose:", purposeField.getText()),
-            createDetailRow("Date of Issue:", "November 10, 2025"),
-            createDetailRow("Valid Until:", "May 10, 2026")
+            createDetailRow("Date of Issue:",GetCurrentDate()),
+            createDetailRow("Valid Until:", GetExpiryDate())
         );
 
         // Certificate footer

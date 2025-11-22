@@ -3,10 +3,15 @@ package guardx;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 
 public class EmergencyAssistanceController {
 
     @FXML private Label locationLabel;
+    private final SupabaseService supabaseService = new SupabaseService();
 
     @FXML
     public void initialize() {
@@ -15,7 +20,7 @@ public class EmergencyAssistanceController {
         detectLocation();
     }
 
-    // Navigation handlers
+    // Navigation handlers (unchanged)
     @FXML
     private void handleDashboard() {
         try {
@@ -92,18 +97,59 @@ public class EmergencyAssistanceController {
         }
     }
 
-    // Emergency functionality handlers
+    // Emergency functionality handlers - UPDATED
     @FXML
-    private void handleSOS() {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Emergency Alert Sent!");
-        alert.setHeaderText(null);
-        alert.setContentText("Emergency alert sent to nearest station!\n\n" +
-                           "Your location has been shared with emergency responders.\n" +
-                           "Help is on the way!");
-        alert.showAndWait();
-    }
+private void handleSOS() {
+    // Get current location and time
+    String location = locationLabel.getText();
+    String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+    LocalDate currentDate = LocalDate.now();
+    
+    // Get current user ID from session
+    String currentUserId = getCurrentUserId();
+    
+    // Create emergency incident report with user_id
+    CompletableFuture<Boolean> future = supabaseService.saveIncident(
+        "EMERGENCY ASSISTANCE REQUEST",
+        currentDate,
+        currentTime,
+        location,
+        "Emergency assistance requested via SOS button. User requires immediate help at location: " + location,
+        currentUserId
+    );
+    
+    future.thenAccept(success -> {
+        javafx.application.Platform.runLater(() -> {
+            if (success) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Emergency Alert Sent!");
+                alert.setHeaderText(null);
+                alert.setContentText("Emergency alert sent to nearest station!\n\n" +
+                                   "Your location has been shared with emergency responders.\n" +
+                                   "Help is on the way!\n\n" +
+                                   "Incident report has been logged in the system.");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Emergency Alert Sent!");
+                alert.setHeaderText(null);
+                alert.setContentText("Emergency alert sent to nearest station!\n\n" +
+                                   "Your location has been shared with emergency responders.\n" +
+                                   "Help is on the way!\n\n" +
+                                   "Note: Could not save incident report to database.");
+                alert.showAndWait();
+            }
+        });
+    });
+}
 
+private String getCurrentUserId() {
+    // Get the current user ID from your session management
+    if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
+        return Globals.current_user_id;
+    }
+    return null; // Or handle this case appropriately
+}
     @FXML
     private void handleUpdateLocation() {
         locationLabel.setText("Updating location...");
@@ -121,8 +167,6 @@ public class EmergencyAssistanceController {
             2000
         );
     }
-
-    // Removed the call handler methods since contacts are now just information
 
     private void detectLocation() {
         // Simulate location detection

@@ -8,10 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
-import javafx.scene.shape.Circle;
-import javafx.scene.paint.Color;// Add this import for Color
+import java.util.concurrent.CompletableFuture;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class TrackCasesController {
 
@@ -26,12 +26,13 @@ public class TrackCasesController {
 
     private ObservableList<Case> cases = FXCollections.observableArrayList();
     private ObservableList<Case> filteredCases = FXCollections.observableArrayList();
+    private final SupabaseService supabaseService = new SupabaseService();
 
     @FXML
     public void initialize() {
         System.out.println("✅ Track Cases Controller initialized!");
         setupTable();
-        loadMockData();
+        loadCasesFromDatabase();
     }
 
     private void setupTable() {
@@ -52,14 +53,17 @@ public class TrackCasesController {
                     setStyle("");
                 } else {
                     setText(item);
-                    switch (item) {
-                        case "Pending":
+                    switch (item.toLowerCase()) {
+                        case "pending":
+                        case "open":
                             setStyle("-fx-background-color: #fef3c7; -fx-text-fill: #92400e; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-padding: 4 8; -fx-background-radius: 12;");
                             break;
-                        case "In Progress":
+                        case "in progress":
+                        case "assigned":
                             setStyle("-fx-background-color: #dbeafe; -fx-text-fill: #1e40af; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-padding: 4 8; -fx-background-radius: 12;");
                             break;
-                        case "Closed":
+                        case "closed":
+                        case "resolved":
                             setStyle("-fx-background-color: #d1fae5; -fx-text-fill: #065f46; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-padding: 4 8; -fx-background-radius: 12;");
                             break;
                         default:
@@ -95,17 +99,77 @@ public class TrackCasesController {
         casesTable.setItems(filteredCases);
     }
 
-    private void loadMockData() {
-        cases.addAll(
-            new Case("#1234", "Theft Report", "Officer Johnson", "In Progress", "2 days ago"),
-            new Case("#1235", "Traffic Violation", "Officer Smith", "Closed", "1 week ago"),
-            new Case("#1236", "Noise Complaint", "Officer Williams", "Pending", "3 hours ago"),
-            new Case("#1237", "Lost Property", "Officer Brown", "In Progress", "5 days ago")
-        );
-        filteredCases.setAll(cases);
+    private void loadCasesFromDatabase() {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId == null) {
+            showAlert("Error", "Please log in to view your cases.");
+            return;
+        }
+
+        CompletableFuture<JSONArray> future = supabaseService.getUserCases(currentUserId);
+        
+        future.thenAccept(casesArray -> {
+            javafx.application.Platform.runLater(() -> {
+                cases.clear();
+                if (casesArray != null && casesArray.length() > 0) {
+                    for (int i = 0; i < casesArray.length(); i++) {
+                        JSONObject caseObj = casesArray.getJSONObject(i);
+                        Case caseItem = createCaseFromJSON(caseObj);
+                        cases.add(caseItem);
+                    }
+                    filteredCases.setAll(cases);
+                    System.out.println("✅ Loaded " + cases.size() + " cases from database");
+                } else {
+                    System.out.println("ℹ️ No cases found for user");
+                    showAlert("No Cases", "You don't have any cases yet.");
+                }
+            });
+        }).exceptionally(e -> {
+            javafx.application.Platform.runLater(() -> {
+                System.err.println("❌ Error loading cases: " + e.getMessage());
+                showAlert("Error", "Failed to load cases. Please try again.");
+            });
+            return null;
+        });
     }
 
-    // Navigation handlers
+    private Case createCaseFromJSON(JSONObject caseObj) {
+        String id = caseObj.optString("id", "N/A").substring(0, 8); // Shorten UUID
+        String title = caseObj.optString("title", "Untitled Case");
+        String status = caseObj.optString("status", "Unknown");
+        //String priority = caseObj.optString("priority", "Medium");
+        String createdAt = formatDate(caseObj.optString("created_at"));
+        
+        // Get assigned officer name if available
+        String officer = "Not Assigned";
+        if (caseObj.has("assigned_to") && !caseObj.isNull("assigned_to")) {
+            // You might need to fetch officer details separately
+            officer = "Officer " + caseObj.getString("assigned_to").substring(0, 6);
+        }
+
+        return new Case("#" + id, title, officer, status, createdAt);
+    }
+
+    private String formatDate(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return "Unknown";
+        }
+        try {
+            // Format: "2024-01-15T10:30:00Z" -> "2 days ago"
+            // For now, just return the date part
+            return dateString.split("T")[0];
+        } catch (Exception e) {
+            return dateString;
+        }
+    }
+
+    private String getCurrentUserId() {
+        // Get the current user ID from your session management
+        // This depends on how you're storing the logged-in user
+        return Globals.current_user_id;
+    }
+
+    // Navigation handlers (unchanged)
     @FXML
     private void handleDashboard() {
         try {
@@ -148,8 +212,8 @@ public class TrackCasesController {
 
     @FXML
     private void handleTrackCase() {
-        // Already on this page
-        System.out.println("Already on My Cases page");
+        // Refresh cases when navigating to this page
+        loadCasesFromDatabase();
     }
 
     @FXML
@@ -191,7 +255,8 @@ public class TrackCasesController {
         } else {
             filteredCases.setAll(cases.filtered(caseItem -> 
                 caseItem.getId().toLowerCase().contains(query) ||
-                caseItem.getType().toLowerCase().contains(query)
+                caseItem.getType().toLowerCase().contains(query) ||
+                caseItem.getStatus().toLowerCase().contains(query)
             ));
         }
     }
@@ -202,12 +267,9 @@ public class TrackCasesController {
         alert.setHeaderText("Detailed information about your case");
         alert.getDialogPane().setPrefSize(600, 400);
         
-        // Create detailed content
-        
         VBox content = new VBox(15);
         content.setPadding(new Insets(20));
         
-        // Case information grid
         GridPane grid = new GridPane();
         grid.setHgap(20);
         grid.setVgap(10);
@@ -217,10 +279,19 @@ public class TrackCasesController {
         
         grid.add(createDetailLabel("Status:"), 0, 1);
         Label statusLabel = createValueLabel(caseItem.getStatus());
-        switch (caseItem.getStatus()) {
-            case "Pending": statusLabel.setStyle("-fx-text-fill: #92400e; -fx-font-weight: bold;"); break;
-            case "In Progress": statusLabel.setStyle("-fx-text-fill: #1e40af; -fx-font-weight: bold;"); break;
-            case "Closed": statusLabel.setStyle("-fx-text-fill: #065f46; -fx-font-weight: bold;"); break;
+        switch (caseItem.getStatus().toLowerCase()) {
+            case "pending":
+            case "open":
+                statusLabel.setStyle("-fx-text-fill: #92400e; -fx-font-weight: bold;"); 
+                break;
+            case "in progress":
+            case "assigned":
+                statusLabel.setStyle("-fx-text-fill: #1e40af; -fx-font-weight: bold;"); 
+                break;
+            case "closed":
+            case "resolved":
+                statusLabel.setStyle("-fx-text-fill: #065f46; -fx-font-weight: bold;"); 
+                break;
         }
         grid.add(statusLabel, 1, 1);
         
@@ -230,18 +301,7 @@ public class TrackCasesController {
         grid.add(createDetailLabel("Last Update:"), 0, 3);
         grid.add(createValueLabel(caseItem.getLastUpdate()), 1, 3);
         
-        // Case timeline
-        Label timelineLabel = new Label("Case Timeline");
-        timelineLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
-        
-        VBox timeline = new VBox(10);
-        timeline.getChildren().addAll(
-            createTimelineItem("Case assigned to " + caseItem.getOfficer(), "2 days ago"),
-            createTimelineItem("Case validated and opened for investigation", "3 days ago"),
-            createTimelineItem("Report submitted", "3 days ago")
-        );
-        
-        content.getChildren().addAll(grid, timelineLabel, timeline);
+        content.getChildren().add(grid);
         alert.getDialogPane().setContent(content);
         alert.showAndWait();
     }
@@ -256,22 +316,6 @@ public class TrackCasesController {
         Label label = new Label(text);
         label.setStyle("-fx-font-weight: bold;");
         return label;
-    }
-
-    private HBox createTimelineItem(String text, String time) {
-        HBox item = new HBox(10);
-        Circle dot = new Circle(4);
-        dot.setFill(javafx.scene.paint.Color.BLUE);
-        
-        VBox textBox = new VBox(2);
-        Label mainText = new Label(text);
-        mainText.setStyle("-fx-font-size: 12;");
-        Label timeText = new Label(time);
-        timeText.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 10;");
-        
-        textBox.getChildren().addAll(mainText, timeText);
-        item.getChildren().addAll(dot, textBox);
-        return item;
     }
 
     private void showAlert(String title, String message) {
@@ -303,6 +347,6 @@ public class TrackCasesController {
         public String getOfficer() { return officer; }
         public String getStatus() { return status; }
         public String getLastUpdate() { return lastUpdate; }
-        public String getAction() { return "View"; } // For table column
+        public String getAction() { return "View"; }
     }
 }

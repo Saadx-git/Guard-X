@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.concurrent.CompletableFuture;
 
 public class IncidentReportController {
 
@@ -13,6 +16,8 @@ public class IncidentReportController {
     @FXML private TextField locationField;
     @FXML private TextArea descriptionArea;
 
+    private final SupabaseService supabaseService = new SupabaseService();
+
     @FXML
     public void initialize() {
         System.out.println("✅ Incident Report Controller initialized!");
@@ -20,7 +25,7 @@ public class IncidentReportController {
         datePicker.setValue(LocalDate.now());
     }
 
-    // Navigation handlers
+    // Navigation handlers (unchanged)
     @FXML
     private void handleDashboard() {
         try {
@@ -99,11 +104,11 @@ public class IncidentReportController {
         }
     }
 
-    // Form handlers
+    // Form handlers - UPDATED
     @FXML
     private void handleSubmit() {
         if (validateForm()) {
-            showConfirmationDialog();
+            saveIncidentToDatabase();
         }
     }
 
@@ -118,7 +123,7 @@ public class IncidentReportController {
     }
 
     private boolean validateForm() {
-        if (titleField.getText().isEmpty()) {
+        if (titleField.getText().trim().isEmpty()) {
             showAlert("Validation Error", "Please enter an incident title.");
             return false;
         }
@@ -126,26 +131,75 @@ public class IncidentReportController {
             showAlert("Validation Error", "Please select the incident date.");
             return false;
         }
-        if (timeField.getText().isEmpty()) {
+        if (timeField.getText().trim().isEmpty()) {
             showAlert("Validation Error", "Please enter the incident time.");
             return false;
         }
-        if (locationField.getText().isEmpty()) {
+        // Validate time format
+        if (!isValidTime(timeField.getText().trim())) {
+            showAlert("Validation Error", "Please enter time in valid format (HH:MM or HH:MM:SS).");
+            return false;
+        }
+        if (locationField.getText().trim().isEmpty()) {
             showAlert("Validation Error", "Please enter the incident location.");
             return false;
         }
-        if (descriptionArea.getText().isEmpty()) {
+        if (descriptionArea.getText().trim().isEmpty()) {
             showAlert("Validation Error", "Please provide a detailed description.");
             return false;
         }
         return true;
     }
 
+    private boolean isValidTime(String time) {
+        try {
+            LocalTime.parse(time);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    private void saveIncidentToDatabase() {
+    String title = titleField.getText().trim();
+    LocalDate date = datePicker.getValue();
+    String time = timeField.getText().trim();
+    String location = locationField.getText().trim();
+    String description = descriptionArea.getText().trim();
+
+    // Get current user ID from session
+    String currentUserId = getCurrentUserId();
+
+    // Use SupabaseService to save the incident with user_id
+    CompletableFuture<Boolean> future = supabaseService.saveIncident(
+        title, date, time, location, description, currentUserId
+    );
+    
+    future.thenAccept(success -> {
+        if (success) {
+            javafx.application.Platform.runLater(() -> {
+                showConfirmationDialog();
+            });
+        } else {
+            javafx.application.Platform.runLater(() -> {
+                showAlert("Submission Failed", "Failed to submit incident report. Please try again.");
+            });
+        }
+    });
+}
+
+private String getCurrentUserId() {
+    if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
+        return Globals.current_user_id;
+    }
+    return null; // Or handle this case appropriately
+}
+
     private void showConfirmationDialog() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Report Submitted Successfully");
         alert.setHeaderText(null);
-        alert.setContentText("Your incident report has been submitted and assigned case ID #1234.\n\n" +
+        alert.setContentText("Your incident report has been submitted successfully!\n\n" +
                            "You will receive updates via email and can track the progress in the \"Track Case Status\" section.");
         
         alert.showAndWait();
@@ -155,7 +209,7 @@ public class IncidentReportController {
         
         // Navigate back to dashboard
         try {
-            App.setRoot("civilian_dashboard_layout");
+            App.setRoot(Globals.FXML_CIVILIAN_DASHBOARD);
         } catch (Exception e) {
             e.printStackTrace();
         }
