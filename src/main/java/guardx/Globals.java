@@ -32,6 +32,10 @@ public class Globals {
     public static final double FONT_SIZE_TITLE = 32;
     public static final double FONT_SIZE_HEADER = 42;
     
+    public static final String SUPABASE_URL = "https://dkcckpezksmbgckyceqn.supabase.co";
+    public static final String SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrY2NrcGV6a3NtYmdja3ljZXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4MDIyMTUsImV4cCI6MjA3OTM3ODIxNX0.gqGCTYyZYfskVYn5yxNOrDkqQgPiAdQ0QZUcC9QrDnY";
+    public static final String SUPABASE_AUTH_SIGNUP_ENDPOINT = SUPABASE_URL + "/auth/v1/signup";
+
     // Component Sizes
     public static final double LOGIN_FORM_WIDTH = 400;
     public static final double LOGIN_FORM_HEIGHT = 500;
@@ -66,8 +70,7 @@ public class Globals {
     public static final String FXML_CIVILIAN_DASHBOARD = "civilian_dashboard_layout";
     public static final String FXML_OFFICER_DASHBOARD = "OfficerDashboard";
     public static final String FXML_ADMIN_DASHBOARD = "admin_dashboard";
-
-    
+    public static final String FXML_REGISTER = "register_form"; // <-- ADD THIS
 
     public static final String FXML_ASSIGN_OFFICER = "AssignOfficer";
 
