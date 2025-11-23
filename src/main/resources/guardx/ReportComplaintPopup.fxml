@@ -4,22 +4,33 @@
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.ReportComplaintPopupController"
       spacing="15" style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 10;">
     <Label fx:id="titleLabel" text="Details" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
-    <GridPane hgap="10" vgap="10">
-        <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <Label fx:id="idLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Label text="Civilian:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <Label fx:id="civilianLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <Label text="Type:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <Label fx:id="typeLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        <Label text="Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <Label fx:id="dateLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        <Label text="Status:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <Label fx:id="statusLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-    </GridPane>
+<GridPane hgap="10" vgap="10">
+    <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    <Label fx:id="lblID" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+    <Label text="Civilian:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+    <Label fx:id="lblReporter" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+    <Label text="Type:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+    <Label fx:id="lblTitle" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+    <Label text="Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+    <Label fx:id="lblDate" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+    <Label text="Time:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+    <Label fx:id="lblTime" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+    <Label text="Location:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+    <Label fx:id="lblLocation" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+    <Label text="Description:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+    <Label fx:id="lblDescription" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+    <Label text="Status:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+    <Label fx:id="lblStatus" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+</GridPane>
     <HBox spacing="15">
-        <Button text="Accept" fx:id="acceptButton" style="-fx-background-color: #16a34a; -fx-text-fill: white;"/>
-        <Button text="Reject" fx:id="rejectButton" style="-fx-background-color: #dc2626; -fx-text-fill: white;"/>
-        <Button text="Delete" fx:id="deleteButton" style="-fx-background-color: #6b7280; -fx-text-fill: white;"/>
-        <Button text="Close" fx:id="closeButton" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+        <Button text="Accept" fx:id="acceptButton" style="-fx-background-color: #16a34a; -fx-text-fill: white; " onAction="#onAcceptClicked"/>
+        <Button text="Reject" fx:id="rejectButton" style="-fx-background-color: #dc2626; -fx-text-fill: white;" onAction="#onRejectClicked"/>
     </HBox>
 </VBox>

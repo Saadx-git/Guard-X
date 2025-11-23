@@ -119,7 +119,7 @@
                             HBox.hgrow="ALWAYS" maxWidth="Infinity"
                             onMouseClicked="#goToCases">
                             <ImageView fitWidth="32" fitHeight="32">
-                                <Image url="@Icons/File.png"/>
+                                <Image url="@Icons/stamp.png"/>
                             </ImageView>
                             <Label text="Update Status" style="-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: #1e293b;"/>
                             <Label text="Update case progress" style="-fx-font-size: 15; -fx-text-fill: #64748b;"/>

@@ -54,36 +54,47 @@
 
             <!-- Tabs for Reports and Complaints -->
             <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
-                <Tab text="Incident Reports">
-                    <VBox spacing="10">
-                        <TableView fx:id="reportsTable" prefHeight="200">
-                            <columns>
-                                <TableColumn text="ID" fx:id="colReportID"/>
-                                <TableColumn text="Civilian" fx:id="colReportCivilian"/>
-                                <TableColumn text="Type" fx:id="colReportType"/>
-                                <TableColumn text="Date" fx:id="colReportDate"/>
-                                <TableColumn text="Status" fx:id="colReportStatus"/>
-                                <TableColumn text="Actions" fx:id="colReportActions"/>
-                            </columns>
-                        </TableView>
-                    </VBox>
-                </Tab>
 
-                <Tab text="Complaints">
-                    <VBox spacing="10">
-                        <TableView fx:id="complaintsTable" prefHeight="200">
-                            <columns>
-                                <TableColumn text="ID" fx:id="colComplaintID"/>
-                                <TableColumn text="Civilian" fx:id="colComplaintCivilian"/>
-                                <TableColumn text="Type" fx:id="colComplaintType"/>
-                                <TableColumn text="Date" fx:id="colComplaintDate"/>
-                                <TableColumn text="Status" fx:id="colComplaintStatus"/>
-                                <TableColumn text="Actions" fx:id="colComplaintActions"/>
-                            </columns>
-                        </TableView>
-                    </VBox>
-                </Tab>
-            </TabPane>
+    <Tab text="Incident Reports">
+        <VBox spacing="10">
+            <TableView fx:id="reportsTable" prefHeight="200">
+                <columns>
+                    <TableColumn text="ID" fx:id="colReportID"/>
+                    <TableColumn text="Title" fx:id="colReportTitle"/>
+                    <TableColumn text="Date" fx:id="colReportDate"/>
+                    <TableColumn text="Time" fx:id="colReportTime"/>
+                    <TableColumn text="Location" fx:id="colReportLocation"/>
+                    <TableColumn text="Description" fx:id="colReportDescription"/>
+                    <TableColumn text="Reporter" fx:id="colReportReporter"/>
+                    
+                    <TableColumn text="status" fx:id="colReportStatus"/>
+                    
+                    <TableColumn text="Actions" fx:id="colReportActions"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </Tab>
+
+    <Tab text="Complaints">
+        <VBox spacing="10">
+            <TableView fx:id="complaintsTable" prefHeight="200">
+                <columns>
+                    <TableColumn text="ID" fx:id="colComplaintID"/>
+                    <TableColumn text="Type" fx:id="colComplaintType"/>
+                    <TableColumn text="Date" fx:id="colComplaintDate"/>
+                    <TableColumn text="Location" fx:id="colComplaintLocation"/>
+                    <TableColumn text="Description" fx:id="colComplaintDescription"/>
+                    <TableColumn text="Status" fx:id="colComplaintStatus"/>
+                    <TableColumn text="Officer" fx:id="colComplaintOfficer"/>
+                    <TableColumn text="Case ID" fx:id="colComplaintCase"/>
+                    <TableColumn text="Actions" fx:id="colComplaintActions"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </Tab>
+
+</TabPane>
+
         </VBox>
     </center>
 </BorderPane>

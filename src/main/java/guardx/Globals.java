@@ -7,6 +7,7 @@ public class Globals {
     public static final String APP_SUBTITLE = "Law Enforcement Management System";
     public static final int APP_WIDTH = 2320;
     public static final int APP_HEIGHT = 1480;
+
     
     // Color Scheme
     public static final String PRIMARY_COLOR = "#2563eb";
@@ -58,6 +59,7 @@ public class Globals {
     public static final String ROLE_CIVILIAN = "civilian";
     public static final String ROLE_OFFICER = "officer";
     public static final String ROLE_ADMIN = "admin";
+    public static  String USERID = "";
     
     // FXML Filesemergency_assistance
     public static final String FXML_LOGIN = "login";

@@ -8,5 +8,6 @@ module guardx {
     requires org.json; 
     
     opens guardx to javafx.fxml;
+    opens guardx.Dataclass to javafx.base, javafx.fxml;
     exports guardx;
 }
