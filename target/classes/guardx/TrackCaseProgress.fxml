@@ -44,7 +44,12 @@
                     <!-- FIXED: timelineContainer = HBox -->
                     <HBox fx:id="timelineContainer" spacing="20" alignment="CENTER_LEFT"/>
                 </VBox>
-
+                <!-- Add this to your FXML file -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Update Status:" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="statusComboBox" prefWidth="150"/>
+                    <Button fx:id="updateStatusButton" text="Update Status" style="-fx-background-color: #3b82f6; -fx-text-fill: white;"/>
+                </HBox>
                 <!-- Case Details & Add Note -->
                 <HBox spacing="20">
 

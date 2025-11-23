@@ -1169,5 +1169,44 @@ public CompletableFuture<Boolean> updateCaseStatusprogress(String caseId, String
             });
 }
 
+/**
+ * Fetches cases assigned to a specific officer
+ */
+public CompletableFuture<JSONArray> getOfficerAssignedCases(String officerId) {
+    System.out.println("🔍 Fetching cases assigned to officer: " + officerId);
+    
+    // Use the assigned_to field to filter cases
+    String filter = "?assigned_to=eq." + officerId + "&select=*,users!cases_assigned_to_fkey(fullname)";
+
+    String url = SUPABASE_URL + "cases" + filter;
+    System.out.println("🌐 Request URL: " + url);
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                System.out.println("📡 Officer Cases - HTTP Status: " + response.statusCode());
+                
+                if (response.statusCode() == 200) {
+                    JSONArray cases = new JSONArray(response.body());
+                    System.out.println("✅ Found " + cases.length() + " cases assigned to officer " + officerId);
+                    return cases;
+                } else {
+                    System.err.println("❌ Error fetching officer cases. Status: " + response.statusCode());
+                    System.err.println("❌ Error response: " + response.body());
+                    return new JSONArray();
+                }
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching officer cases: " + e.getMessage());
+                e.printStackTrace();
+                return new JSONArray();
+            });
+}
 
 }
