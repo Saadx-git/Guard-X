@@ -74,13 +74,7 @@
                 </HBox>
 
                 <!-- Records -->
-                <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"
-                      fx:id="recordsBtn" onMouseClicked="#handleRecords">
-                    <ImageView fitWidth="16" fitHeight="16" preserveRatio="true">
-                        <Image url="@Icons/database.png"/>
-                    </ImageView>
-                    <Label text="Records" style="-fx-text-fill: #94a3b8; -fx-font-size: 14; -fx-padding: 0 0 0 10;"/>
-                </HBox>
+                
 
                 <!-- Track Progress -->
                 <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 15; -fx-cursor: hand;"

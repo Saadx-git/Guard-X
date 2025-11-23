@@ -27,7 +27,7 @@ public class App extends Application {
             
             System.out.println("Screen dimensions: " + screenWidth + "x" + screenHeight);
             
-            // Use full screen or adjust based on screen size
+            // Use full screen or adjust based on screen esize
             scene = new Scene(root, screenWidth, screenHeight);
 
             AuthStage.setTitle(Globals.APP_NAME + " - " + Globals.APP_SUBTITLE);
