@@ -118,11 +118,11 @@
             <VBox spacing="20" style="-fx-padding: 20;">
 
                 <!-- Welcome Banner -->
-                <VBox style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-                    <Label text="Welcome, User!" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
-                    <Label text="Access all your services from the dashboard below. We're here to serve and protect." 
-                           style="-fx-text-fill: #bfdbfe; -fx-font-size: 14; -fx-wrap-text: true;"/>
-                </VBox>
+<VBox style="-fx-background-color: linear-gradient(to right, #2563eb, #1d4ed8); -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+    <Label fx:id="welcomeLabel" text="Welcome, User!" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
+    <Label text="Access all your services from the dashboard below. We're here to serve and protect." 
+           style="-fx-text-fill: #bfdbfe; -fx-font-size: 14; -fx-wrap-text: true;"/>
+</VBox>
 
                 <!-- Quick Access Section -->
                 <VBox spacing="10">
@@ -252,39 +252,33 @@
                 </VBox>
 
                 <!-- Recent Activity Section (unchanged) -->
-                <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
-                    <VBox spacing="5">
-                        <Label text="Recent Activity" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                        <Label text="Your latest interactions with the system" style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
-                    </VBox>
-                    
-                    <VBox spacing="10" style="-fx-padding: 15 0 0 0;">
-                        <!-- Activity Items (unchanged) -->
-                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
-                            <Circle radius="4" fill="#2563eb"/>
-                            <VBox spacing="2">
-                                <Label text="Case #1001 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
-                                <Label text="2 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
-                            </VBox>
-                        </HBox>
-                        
-                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
-                            <Circle radius="4" fill="#2563eb"/>
-                            <VBox spacing="2">
-                                <Label text="Case #1002 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
-                                <Label text="3 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
-                            </VBox>
-                        </HBox>
-                        
-                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-padding: 12;">
-                            <Circle radius="4" fill="#2563eb"/>
-                            <VBox spacing="2">
-                                <Label text="Case #1003 status updated" style="-fx-text-fill: #1e293b; -fx-font-size: 14;"/>
-                                <Label text="5 days ago" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
-                            </VBox>
-                        </HBox>
-                    </VBox>
-                </VBox>
+                <!-- Recent Activity Section -->
+<VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Recent Activity" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+            <Label text="Your latest interactions with the system" style="-fx-text-fill: #64748b; -fx-font-size: 14;"/>
+        </VBox>
+        <Button text="Refresh" onAction="#handleRefreshActivity" 
+                style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 5 10;"/>
+    </HBox>
+    
+    <VBox fx:id="recentActivityBox" spacing="10" style="-fx-padding: 15 0 0 0;">
+        <!-- No Activity Label -->
+        <Label fx:id="noActivityLabel" text="Loading recent activity..." 
+               style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-alignment: CENTER; -fx-padding: 20;"
+               visible="true"/>
+        
+        <!-- Activity List View -->
+        <ListView fx:id="activityListView" 
+                  style="-fx-background-color: transparent; -fx-border-color: transparent;"
+                  VBox.vgrow="ALWAYS">
+            <placeholder>
+                <Label text="No recent activity found" style="-fx-text-fill: #64748b; -fx-alignment: CENTER; -fx-padding: 20;"/>
+            </placeholder>
+        </ListView>
+    </VBox>
+</VBox>
                 
             </VBox>
         </ScrollPane>
