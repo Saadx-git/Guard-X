@@ -167,8 +167,21 @@ public class IncidentReportController {
     String location = locationField.getText().trim();
     String description = descriptionArea.getText().trim();
 
+    // Validation
+    if (title.isEmpty() || date == null || time.isEmpty() || location.isEmpty() || description.isEmpty()) {
+        showAlert("Validation Error", "Please fill in all fields.");
+        return;
+    }
+
     // Get current user ID from session
     String currentUserId = getCurrentUserId();
+    
+    if (currentUserId == null || currentUserId.isEmpty()) {
+        showAlert("Session Error", "No user session found. Please log in again.");
+        return;
+    }
+
+    System.out.println("💾 Saving incident for user: " + currentUserId);
 
     // Use SupabaseService to save the incident with user_id
     CompletableFuture<Boolean> future = supabaseService.saveIncident(
@@ -176,18 +189,25 @@ public class IncidentReportController {
     );
     
     future.thenAccept(success -> {
-        if (success) {
-            javafx.application.Platform.runLater(() -> {
+        javafx.application.Platform.runLater(() -> {
+            if (success) {
                 showConfirmationDialog();
-            });
-        } else {
-            javafx.application.Platform.runLater(() -> {
-                showAlert("Submission Failed", "Failed to submit incident report. Please try again.");
-            });
-        }
+                // Clear form after successful submission
+                clearIncidentForm();
+            } else {
+                showAlert("Submission Failed", "Failed to submit incident report. Please check your connection and try again.");
+            }
+        });
     });
 }
 
+private void clearIncidentForm() {
+    titleField.clear();
+    datePicker.setValue(null);
+    timeField.clear();
+    locationField.clear();
+    descriptionArea.clear();
+}
 private String getCurrentUserId() {
     if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
         return Globals.current_user_id;

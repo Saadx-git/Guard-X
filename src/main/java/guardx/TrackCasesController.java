@@ -10,6 +10,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,6 +29,7 @@ public class TrackCasesController {
     private ObservableList<Case> cases = FXCollections.observableArrayList();
     private ObservableList<Case> filteredCases = FXCollections.observableArrayList();
     private final SupabaseService supabaseService = new SupabaseService();
+    private Map<String, String> officerNamesCache = new HashMap<>(); // Cache for officer names
 
     @FXML
     public void initialize() {
@@ -100,57 +103,105 @@ public class TrackCasesController {
     }
 
     private void loadCasesFromDatabase() {
-    String currentUserId = getCurrentUserId();
-    if (currentUserId == null) {
-        showAlert("Error", "Please log in to view your cases.");
-        return;
+        String currentUserId = getCurrentUserId();
+        if (currentUserId == null) {
+            showAlert("Error", "Please log in to view your cases.");
+            return;
+        }
+
+        System.out.println("👤 Current User ID: " + currentUserId);
+
+        // First load all officer names to cache
+        loadOfficerNames().thenCompose(ignore -> {
+            // Then load user-specific cases
+            return supabaseService.getUserCases(currentUserId);
+        }).thenAccept(userCases -> {
+            javafx.application.Platform.runLater(() -> {
+                cases.clear();
+                if (userCases != null && userCases.length() > 0) {
+                    for (int i = 0; i < userCases.length(); i++) {
+                        JSONObject caseObj = userCases.getJSONObject(i);
+                        Case caseItem = createCaseFromJSON(caseObj);
+                        cases.add(caseItem);
+                    }
+                    filteredCases.setAll(cases);
+                    System.out.println("✅ Successfully loaded " + cases.size() + " cases for display");
+                } else {
+                    System.out.println("ℹ️ No cases found for current user");
+                    showAlert("No Cases", "You don't have any cases yet. Submit an incident report or complaint to create a case.");
+                }
+            });
+        }).exceptionally(e -> {
+            javafx.application.Platform.runLater(() -> {
+                System.err.println("❌ Error in case loading process: " + e.getMessage());
+                showAlert("Error", "Failed to load cases. Please try again.");
+            });
+            return null;
+        });
     }
 
-    System.out.println("👤 Current User ID: " + currentUserId);
-
-    // First, let's debug by checking ALL cases
-    CompletableFuture<JSONArray> allCasesFuture = supabaseService.getAllCases();
-    
-    allCasesFuture.thenCompose(allCases -> {
-        // Now get user-specific cases
-        return supabaseService.getUserCases(currentUserId);
-    }).thenAccept(userCases -> {
-        javafx.application.Platform.runLater(() -> {
-            cases.clear();
-            if (userCases != null && userCases.length() > 0) {
-                for (int i = 0; i < userCases.length(); i++) {
-                    JSONObject caseObj = userCases.getJSONObject(i);
-                    Case caseItem = createCaseFromJSON(caseObj);
-                    cases.add(caseItem);
+    private CompletableFuture<Void> loadOfficerNames() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // Fetch all users with officer role
+                JSONArray allUsers = supabaseService.getAllUsers().get();
+                if (allUsers != null) {
+                    for (int i = 0; i < allUsers.length(); i++) {
+                        JSONObject user = allUsers.getJSONObject(i);
+                        String userId = user.getString("id");
+                        String role = user.optString("role", "");
+                        
+                        // Cache officer names
+                        if ("officer".equalsIgnoreCase(role)) {
+                            String fullName = user.optString("fullname", "Unknown Officer");
+                            officerNamesCache.put(userId, fullName);
+                            System.out.println("👮 Cached officer: " + userId + " -> " + fullName);
+                        }
+                    }
+                    System.out.println("✅ Loaded " + officerNamesCache.size() + " officer names into cache");
                 }
-                filteredCases.setAll(cases);
-                System.out.println("✅ Successfully loaded " + cases.size() + " cases for display");
-            } else {
-                System.out.println("ℹ️ No cases found for current user");
-                showAlert("No Cases", "You don't have any cases yet. Submit an incident report or complaint to create a case.");
+            } catch (Exception e) {
+                System.err.println("❌ Error loading officer names: " + e.getMessage());
             }
+            return null;
         });
-    }).exceptionally(e -> {
-        javafx.application.Platform.runLater(() -> {
-            System.err.println("❌ Error in case loading process: " + e.getMessage());
-            showAlert("Error", "Failed to load cases. Please try again.");
-        });
-        return null;
-    });
-}
+    }
+
+    private String getOfficerName(String officerId) {
+        if (officerId == null || officerId.isEmpty() || "null".equals(officerId)) {
+            return "Not Assigned";
+        }
+        
+        String officerName = officerNamesCache.get(officerId);
+        if (officerName != null) {
+            return officerName;
+        } else {
+            // If not in cache, try to fetch it individually
+            try {
+                JSONObject user = supabaseService.getUserById(officerId).get();
+                if (user != null) {
+                    String fullName = user.optString("fullname", "Unknown Officer");
+                    officerNamesCache.put(officerId, fullName);
+                    return fullName;
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Error fetching officer name for ID: " + officerId);
+            }
+            return "Officer " + officerId.substring(0, 6); // Fallback
+        }
+    }
 
     private Case createCaseFromJSON(JSONObject caseObj) {
         String id = caseObj.optString("id", "N/A").substring(0, 8); // Shorten UUID
         String title = caseObj.optString("title", "Untitled Case");
         String status = caseObj.optString("status", "Unknown");
-        //String priority = caseObj.optString("priority", "Medium");
         String createdAt = formatDate(caseObj.optString("created_at"));
         
-        // Get assigned officer name if available
+        // Get assigned officer name
         String officer = "Not Assigned";
         if (caseObj.has("assigned_to") && !caseObj.isNull("assigned_to")) {
-            // You might need to fetch officer details separately
-            officer = "Officer " + caseObj.getString("assigned_to").substring(0, 6);
+            String officerId = caseObj.getString("assigned_to");
+            officer = getOfficerName(officerId);
         }
 
         return new Case("#" + id, title, officer, status, createdAt);
@@ -161,8 +212,6 @@ public class TrackCasesController {
             return "Unknown";
         }
         try {
-            // Format: "2024-01-15T10:30:00Z" -> "2 days ago"
-            // For now, just return the date part
             return dateString.split("T")[0];
         } catch (Exception e) {
             return dateString;
@@ -170,8 +219,6 @@ public class TrackCasesController {
     }
 
     private String getCurrentUserId() {
-        // Get the current user ID from your session management
-        // This depends on how you're storing the logged-in user
         return Globals.current_user_id;
     }
 
@@ -262,7 +309,8 @@ public class TrackCasesController {
             filteredCases.setAll(cases.filtered(caseItem -> 
                 caseItem.getId().toLowerCase().contains(query) ||
                 caseItem.getType().toLowerCase().contains(query) ||
-                caseItem.getStatus().toLowerCase().contains(query)
+                caseItem.getStatus().toLowerCase().contains(query) ||
+                caseItem.getOfficer().toLowerCase().contains(query)
             ));
         }
     }

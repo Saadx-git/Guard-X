@@ -154,23 +154,39 @@ public CompletableFuture<Boolean> saveIncident(
     payload.put("time_of_incident", time);
     payload.put("location", location);
     payload.put("detailed_description", description);
-    payload.put("user_id", userId); // Add user_id from session
+    payload.put("user_id", userId);
+    payload.put("status", "Pending"); // Explicitly set status
+
+    System.out.println("📤 Incident Payload: " + payload.toString());
+    System.out.println("🔗 User ID: " + userId);
 
     HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(SUPABASE_URL + "incidents"))
             .header("Content-Type", "application/json")
             .header("apikey", SUPABASE_ANON_KEY)
+            .header("Authorization", "Bearer " + SUPABASE_ANON_KEY) // Sometimes needed
             .header("Prefer", "return=minimal")
             .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
             .build();
 
     return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply(response -> {
-                System.out.println("Incident submission response: " + response.statusCode());
-                return response.statusCode() == 201; // 201 Created
+                System.out.println("📡 Incident submission response - Status: " + response.statusCode());
+                System.out.println("📡 Response Body: " + response.body());
+                
+                // Check for both 201 (Created) and 200 (OK)
+                boolean success = response.statusCode() == 201 || response.statusCode() == 200;
+                if (!success) {
+                    System.err.println("❌ Incident submission failed with status: " + response.statusCode());
+                    System.err.println("❌ Error response: " + response.body());
+                } else {
+                    System.out.println("✅ Incident submitted successfully!");
+                }
+                return success;
             })
             .exceptionally(e -> {
                 System.err.println("❌ Error saving incident: " + e.getMessage());
+                e.printStackTrace();
                 return false;
             });
 }
@@ -269,6 +285,85 @@ public CompletableFuture<JSONArray> getUserCases(String userId) {
                 System.err.println("❌ Exception fetching cases: " + e.getMessage());
                 e.printStackTrace();
                 return new JSONArray();
+            });
+}
+
+// Add these methods to your SupabaseService class
+
+/**
+ * Gets all users from the users table
+ */
+public CompletableFuture<JSONArray> getAllUsers() {
+    System.out.println("🔍 Fetching all users from database");
+    
+    String url = SUPABASE_URL + "users?select=*";
+    System.out.println("🌐 Request URL: " + url);
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                System.out.println("📡 All Users - HTTP Status: " + response.statusCode());
+                if (response.statusCode() == 200) {
+                    JSONArray users = new JSONArray(response.body());
+                    System.out.println("📊 Total users in database: " + users.length());
+                    return users;
+                } else {
+                    System.err.println("❌ Error fetching all users. Status: " + response.statusCode());
+                    return new JSONArray();
+                }
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching all users: " + e.getMessage());
+                e.printStackTrace();
+                return new JSONArray();
+            });
+}
+
+/**
+ * Gets a specific user by ID
+ */
+public CompletableFuture<JSONObject> getUserById(String userId) {
+    System.out.println("🔍 Fetching user by ID: " + userId);
+    
+    String filter = "?id=eq." + userId;
+    String url = SUPABASE_URL + "users" + filter;
+    System.out.println("🌐 Request URL: " + url);
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                System.out.println("📡 User by ID - HTTP Status: " + response.statusCode());
+                if (response.statusCode() == 200) {
+                    JSONArray users = new JSONArray(response.body());
+                    if (users.length() == 1) {
+                        JSONObject user = users.getJSONObject(0);
+                        System.out.println("✅ Found user: " + user.getString("email"));
+                        return user;
+                    } else {
+                        System.err.println("❌ User not found with ID: " + userId);
+                        return null;
+                    }
+                } else {
+                    System.err.println("❌ Error fetching user by ID. Status: " + response.statusCode());
+                    return null;
+                }
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching user by ID: " + e.getMessage());
+                e.printStackTrace();
+                return null;
             });
 }
 
