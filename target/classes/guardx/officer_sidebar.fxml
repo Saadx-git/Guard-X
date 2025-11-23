@@ -100,7 +100,7 @@
         <!-- Footer -->
         <VBox style="-fx-background-color: #0f172a; -fx-padding: 15;" spacing="5">
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 8 0; -fx-cursor: hand;"
-                  fx:id="logoutBtn" onMouseClicked="#handleLogout">
+                  fx:id="logoutBtn" onMouseClicked="#handlelogout">
                 <ImageView fitWidth="14" fitHeight="14" preserveRatio="true">
                     <Image url="@Icons/logout.png"/>
                 </ImageView>

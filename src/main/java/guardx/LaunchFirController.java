@@ -175,22 +175,22 @@ public class LaunchFirController {
       // insertNewCase should return CompletableFuture<String> (UUID)
 service.insertNewCase(title, description, priority, status, currentOfficerId, currentOfficerId)
        .thenAccept(newCaseId -> Platform.runLater(() -> {
-           if (newCaseId != null && !newCaseId.isEmpty()) {
-               // now newCaseId is a String, UUID
-               service.insertFir(newCaseId, Globals.user_fir)
-                      .thenAccept(firSuccess -> Platform.runLater(() -> {
-                          if (firSuccess) {
-                              showConfirmationAndReturnDashboard("FIR Registered",
-                                  "New case created and FIR registered successfully.");
-                          } else {
-                              newCaseErrorLabel.setText("Case created, but FIR registration failed.");
-                              submitButton.setDisable(false);
-                          }
-                      }));
-           } else {
-               newCaseErrorLabel.setText("Failed to create new case.");
-               submitButton.setDisable(false);
-           }
+           //if (newCaseId != null && !newCaseId.isEmpty()) {
+           //    // now newCaseId is a String, UUID
+           //    service.insertFir(newCaseId, Globals.user_fir)
+           //           .thenAccept(firSuccess -> Platform.runLater(() -> {
+           //               if (firSuccess) {
+           //                   showConfirmationAndReturnDashboard("FIR Registered",
+           //                       "New case created and FIR registered successfully.");
+           //               } else {
+           //                   newCaseErrorLabel.setText("Case created, but FIR registration failed.");
+           //                   submitButton.setDisable(false);
+           //               }
+           //           }));
+           //} else {
+           //    newCaseErrorLabel.setText("Failed to create new case.");
+           //    submitButton.setDisable(false);
+           //}
        }));
 
 
