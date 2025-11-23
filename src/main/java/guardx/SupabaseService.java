@@ -137,7 +137,7 @@ public CompletableFuture<Boolean> registerUser(
             });
 }
 
-    /**
+ /**
  * Saves an incident report to the incidents table with user_id.
  */
 public CompletableFuture<Boolean> saveIncident(
@@ -155,7 +155,7 @@ public CompletableFuture<Boolean> saveIncident(
     payload.put("location", location);
     payload.put("detailed_description", description);
     payload.put("user_id", userId);
-    payload.put("status", "Pending"); // Explicitly set status
+    payload.put("status", "Pending");
 
     System.out.println("📤 Incident Payload: " + payload.toString());
     System.out.println("🔗 User ID: " + userId);
@@ -164,7 +164,7 @@ public CompletableFuture<Boolean> saveIncident(
             .uri(URI.create(SUPABASE_URL + "incidents"))
             .header("Content-Type", "application/json")
             .header("apikey", SUPABASE_ANON_KEY)
-            .header("Authorization", "Bearer " + SUPABASE_ANON_KEY) // Sometimes needed
+            .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
             .header("Prefer", "return=minimal")
             .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
             .build();
@@ -174,13 +174,16 @@ public CompletableFuture<Boolean> saveIncident(
                 System.out.println("📡 Incident submission response - Status: " + response.statusCode());
                 System.out.println("📡 Response Body: " + response.body());
                 
-                // Check for both 201 (Created) and 200 (OK)
                 boolean success = response.statusCode() == 201 || response.statusCode() == 200;
-                if (!success) {
+                if (success) {
+                    System.out.println("✅ Incident submitted successfully!");
+                    // Log incident creation
+                    logUserActivity(userId, "Created incident report: " + title);
+                } else {
                     System.err.println("❌ Incident submission failed with status: " + response.statusCode());
                     System.err.println("❌ Error response: " + response.body());
-                } else {
-                    System.out.println("✅ Incident submitted successfully!");
+                    // Log failed incident creation
+                    logUserActivity(userId, "Failed to create incident report: " + title);
                 }
                 return success;
             })
@@ -190,9 +193,7 @@ public CompletableFuture<Boolean> saveIncident(
                 return false;
             });
 }
-/**
- * Saves a complaint to the complaints table with user_id.
- */
+
 /**
  * Saves a complaint to the complaints table with user_id.
  */
@@ -214,9 +215,8 @@ public CompletableFuture<Boolean> saveComplaint(
     payload.put("description", description);
     payload.put("witness_information", witnessInformation);
     payload.put("status", "open");
-    payload.put("user_id", userId); // Add user_id from session
+    payload.put("user_id", userId);
     
-    // Add optional fields as they are (empty or not)
     payload.put("officer_name", officerName);
     payload.put("badge_number", badgeNumber);
     payload.put("related_case", relatedCase);
@@ -232,7 +232,15 @@ public CompletableFuture<Boolean> saveComplaint(
     return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply(response -> {
                 System.out.println("Complaint submission response: " + response.statusCode());
-                return response.statusCode() == 201; // 201 Created
+                boolean success = response.statusCode() == 201;
+                if (success) {
+                    // Log complaint creation
+                    logUserActivity(userId, "Submitted complaint: " + complaintType);
+                } else {
+                    // Log failed complaint creation
+                    logUserActivity(userId, "Failed to submit complaint: " + complaintType);
+                }
+                return success;
             })
             .exceptionally(e -> {
                 System.err.println("❌ Error saving complaint: " + e.getMessage());
@@ -445,6 +453,13 @@ public CompletableFuture<Boolean> getUserDetails(String userId) {
 }
 
 /**
+ * Get the HTTP client instance (add this to SupabaseService)
+ */
+public HttpClient getHttpClient() {
+    return httpClient;
+}
+
+/**
  * Updates user profile information
  */
 public CompletableFuture<Boolean> updateUserProfile(String userId, String name, String email, 
@@ -471,7 +486,15 @@ public CompletableFuture<Boolean> updateUserProfile(String userId, String name, 
     return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply(response -> {
                 System.out.println("Profile update response: " + response.statusCode());
-                return response.statusCode() == 200 || response.statusCode() == 204;
+                boolean success = response.statusCode() == 200 || response.statusCode() == 204;
+                if (success) {
+                    // Log profile update
+                    logUserActivity(userId, "Updated profile information");
+                } else {
+                    // Log failed profile update
+                    logUserActivity(userId, "Failed to update profile information");
+                }
+                return success;
             })
             .exceptionally(e -> {
                 System.err.println("❌ Error updating profile: " + e.getMessage());
@@ -497,7 +520,15 @@ public CompletableFuture<Boolean> changeUserPassword(String userId, String newPa
     return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply(response -> {
                 System.out.println("Password change response: " + response.statusCode());
-                return response.statusCode() == 200 || response.statusCode() == 204;
+                boolean success = response.statusCode() == 200 || response.statusCode() == 204;
+                if (success) {
+                    // Log password change
+                    logUserActivity(userId, "Changed password");
+                } else {
+                    // Log failed password change
+                    logUserActivity(userId, "Failed to change password");
+                }
+                return success;
             })
             .exceptionally(e -> {
                 System.err.println("❌ Error changing password: " + e.getMessage());
@@ -505,4 +536,34 @@ public CompletableFuture<Boolean> changeUserPassword(String userId, String newPa
             });
 }
 
+
+/**
+ * Logs user activity to the logs table
+ */
+private void logUserActivity(String userId, String activityDescription) {
+    JSONObject logPayload = new JSONObject();
+    logPayload.put("user_id", userId);
+    logPayload.put("activity_description", activityDescription);
+
+    HttpRequest logRequest = HttpRequest.newBuilder()
+            .uri(URI.create(SUPABASE_URL + "logs"))
+            .header("Content-Type", "application/json")
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Prefer", "return=minimal")
+            .POST(HttpRequest.BodyPublishers.ofString(logPayload.toString()))
+            .build();
+
+    httpClient.sendAsync(logRequest, HttpResponse.BodyHandlers.ofString())
+            .thenAccept(response -> {
+                if (response.statusCode() == 201) {
+                    System.out.println("✅ Activity logged: " + activityDescription);
+                } else {
+                    System.err.println("❌ Failed to log activity: " + response.statusCode());
+                }
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Error logging activity: " + e.getMessage());
+                return null;
+            });
+}
 }

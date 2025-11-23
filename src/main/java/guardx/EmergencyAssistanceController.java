@@ -3,6 +3,9 @@ package guardx;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -99,73 +102,115 @@ public class EmergencyAssistanceController {
 
     // Emergency functionality handlers - UPDATED
     @FXML
-private void handleSOS() {
-    // Get current location and time
-    String location = locationLabel.getText();
-    String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-    LocalDate currentDate = LocalDate.now();
-    
-    // Get current user ID from session
-    String currentUserId = getCurrentUserId();
-    
-    // Create emergency incident report with user_id
-    CompletableFuture<Boolean> future = supabaseService.saveIncident(
-        "EMERGENCY ASSISTANCE REQUEST",
-        currentDate,
-        currentTime,
-        location,
-        "Emergency assistance requested via SOS button. User requires immediate help at location: " + location,
-        currentUserId
-    );
-    
-    future.thenAccept(success -> {
-        javafx.application.Platform.runLater(() -> {
-            if (success) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Emergency Alert Sent!");
-                alert.setHeaderText(null);
-                alert.setContentText("Emergency alert sent to nearest station!\n\n" +
-                                   "Your location has been shared with emergency responders.\n" +
-                                   "Help is on the way!\n\n" +
-                                   "Incident report has been logged in the system.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Emergency Alert Sent!");
-                alert.setHeaderText(null);
-                alert.setContentText("Emergency alert sent to nearest station!\n\n" +
-                                   "Your location has been shared with emergency responders.\n" +
-                                   "Help is on the way!\n\n" +
-                                   "Note: Could not save incident report to database.");
-                alert.showAndWait();
-            }
+    private void handleSOS() {
+        // Get current location and time
+        String location = locationLabel.getText();
+        String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        LocalDate currentDate = LocalDate.now();
+        
+        // Get current user ID from session
+        String currentUserId = getCurrentUserId();
+        
+        // Create emergency incident report with user_id
+        CompletableFuture<Boolean> future = supabaseService.saveIncident(
+            "EMERGENCY ASSISTANCE REQUEST",
+            currentDate,
+            currentTime,
+            location,
+            "Emergency assistance requested via SOS button. User requires immediate help at location: " + location,
+            currentUserId
+        );
+        
+        future.thenAccept(success -> {
+            javafx.application.Platform.runLater(() -> {
+                if (success) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Emergency Alert Sent!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Emergency alert sent to nearest station!\n\n" +
+                                       "Your location has been shared with emergency responders.\n" +
+                                       "Help is on the way!\n\n" +
+                                       "Incident report has been logged in the system.");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Emergency Alert Sent!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Emergency alert sent to nearest station!\n\n" +
+                                       "Your location has been shared with emergency responders.\n" +
+                                       "Help is on the way!\n\n" +
+                                       "Note: Could not save incident report to database.");
+                    alert.showAndWait();
+                }
+            });
         });
-    });
-}
-
-private String getCurrentUserId() {
-    // Get the current user ID from your session management
-    if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
-        return Globals.current_user_id;
     }
-    return null; // Or handle this case appropriately
-}
+    
+    private String getCurrentUserId() {
+        // Get the current user ID from your session management
+        if (Globals.current_user_id != null && !Globals.current_user_id.isEmpty()) {
+            return Globals.current_user_id;
+        }
+        return null; // Or handle this case appropriately
+    }
     @FXML
     private void handleUpdateLocation() {
-        locationLabel.setText("Updating location...");
-        // Simulate location detection
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    javafx.application.Platform.runLater(() -> {
-                        locationLabel.setText("123 Main Street, City Center, Islamabad");
-                        showAlert("Location Updated", "Your location has been updated successfully.");
-                    });
-                }
-            },
-            2000
-        );
+        // Create custom dialog
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Update Your Location");
+        dialog.setHeaderText("Enter your current location details");
+
+        // Set the button types
+        ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
+
+        // Create the location input field
+        TextArea locationTextArea = new TextArea(locationLabel.getText());
+        locationTextArea.setPromptText("Enter your full address, landmark, or location details...");
+        locationTextArea.setPrefRowCount(4);
+        locationTextArea.setPrefColumnCount(40);
+        locationTextArea.setWrapText(true);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        grid.add(new Label("Current Location:"), 0, 0);
+        grid.add(locationTextArea, 0, 1);
+        GridPane.setHgrow(locationTextArea, Priority.ALWAYS);
+        GridPane.setVgrow(locationTextArea, Priority.ALWAYS);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Enable/Disable update button depending on whether a location was entered
+        Button updateButton = (Button) dialog.getDialogPane().lookupButton(updateButtonType);
+        updateButton.setDisable(true);
+
+        // Validation
+        locationTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            updateButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        // Convert the result to a string when the update button is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == updateButtonType) {
+                return locationTextArea.getText().trim();
+            }
+            return null;
+        });
+
+        // Show dialog and process result
+        dialog.showAndWait().ifPresent(newLocation -> {
+            if (newLocation != null && !newLocation.isEmpty()) {
+                locationLabel.setText(newLocation);
+                showAlert("Location Updated", 
+                    "✓ Location updated successfully!\n\n" +
+                    "Your current location is now:\n" +
+                    "\"" + newLocation + "\"\n\n" +
+                    "This location will be shared in emergency alerts.");
+            }
+        });
     }
 
     private void detectLocation() {
