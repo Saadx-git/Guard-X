@@ -15,6 +15,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import guardx.Dataclass.*;
+
 public class TrackCasesController {
 
     @FXML private TextField searchField;
@@ -192,32 +194,54 @@ public class TrackCasesController {
     }
 
     private Case createCaseFromJSON(JSONObject caseObj) {
-        String id = caseObj.optString("id", "N/A").substring(0, 8); // Shorten UUID
-        String title = caseObj.optString("title", "Untitled Case");
-        String status = caseObj.optString("status", "Unknown");
-        String createdAt = formatDate(caseObj.optString("created_at"));
-        
-        // Get assigned officer name
-        String officer = "Not Assigned";
-        if (caseObj.has("assigned_to") && !caseObj.isNull("assigned_to")) {
-            String officerId = caseObj.getString("assigned_to");
-            officer = getOfficerName(officerId);
+    String id = caseObj.optString("id", "");
+    String title = caseObj.optString("title", "Untitled Case");
+    String assignedToId = caseObj.optString("assigned_to", "");
+    String priority = caseObj.optString("priority", "medium");
+    String status = caseObj.optString("status", "open");
+    String lastUpdate = formatDate2(caseObj.optString("updated_at", ""));
+    
+    // Get assigned officer name - you'll need to implement this based on your data structure
+    String officerName = "Not Assigned";
+    if (caseObj.has("users") && !caseObj.isNull("users")) {
+        // If the users data is included in the response
+        Object usersData = caseObj.get("users");
+        if (usersData instanceof JSONObject) {
+            JSONObject userObj = (JSONObject) usersData;
+            officerName = userObj.optString("fullname", "Not Assigned");
+        } else if (usersData instanceof JSONArray) {
+            JSONArray usersArray = (JSONArray) usersData;
+            if (usersArray.length() > 0) {
+                officerName = usersArray.getJSONObject(0).optString("fullname", "Not Assigned");
+            }
         }
-
-        return new Case("#" + id, title, officer, status, createdAt);
+    } else if (!assignedToId.isEmpty()) {
+        // If you need to fetch officer name separately
+        officerName = getOfficerName(assignedToId); // You'll need to implement this method
     }
 
-    private String formatDate(String dateString) {
-        if (dateString == null || dateString.isEmpty()) {
-            return "Unknown";
-        }
-        try {
-            return dateString.split("T")[0];
-        } catch (Exception e) {
-            return dateString;
-        }
-    }
+    return new Case(id, title, assignedToId, officerName, priority, status, lastUpdate);
+}
 
+// Helper method to format date
+private String formatDate2(String dateString) {
+    if (dateString == null || dateString.isEmpty()) return "N/A";
+    
+    try {
+        // Format: "2024-01-15T10:30:00.000Z" -> "Jan 15, 2024"
+        java.time.format.DateTimeFormatter formatter = 
+            java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy");
+        java.time.Instant instant = java.time.Instant.parse(dateString);
+        java.time.ZonedDateTime zdt = instant.atZone(java.time.ZoneId.systemDefault());
+        return zdt.format(formatter);
+    } catch (Exception e) {
+        // Return the original string or a shortened version if parsing fails
+        if (dateString.length() >= 10) {
+            return dateString.substring(0, 10); // Return just YYYY-MM-DD
+        }
+        return dateString;
+    }
+}
     private String getCurrentUserId() {
         return Globals.current_user_id;
     }
@@ -378,29 +402,5 @@ public class TrackCasesController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    // Case model class
-    public static class Case {
-        private final String id;
-        private final String type;
-        private final String officer;
-        private final String status;
-        private final String lastUpdate;
-
-        public Case(String id, String type, String officer, String status, String lastUpdate) {
-            this.id = id;
-            this.type = type;
-            this.officer = officer;
-            this.status = status;
-            this.lastUpdate = lastUpdate;
-        }
-
-        public String getId() { return id; }
-        public String getType() { return type; }
-        public String getOfficer() { return officer; }
-        public String getStatus() { return status; }
-        public String getLastUpdate() { return lastUpdate; }
-        public String getAction() { return "View"; }
     }
 }

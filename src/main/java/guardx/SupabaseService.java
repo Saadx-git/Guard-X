@@ -1080,5 +1080,94 @@ public CompletableFuture<String> fetchUserIdByIncidentId(int incidentId) {
             });
 }
 
+// Add these methods to your existing SupabaseService class
+
+/**
+ * Fetches case notes for a specific case with user information
+ */
+public CompletableFuture<JSONArray> getCaseNotes(String caseId) {
+    String url = SUPABASE_URL + "case_notes?case_id=eq." + caseId + 
+                "&select=*,users(fullname)&order=created_at.desc";
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                if (response.statusCode() == 200) {
+                    return new JSONArray(response.body());
+                }
+                System.err.println("❌ Error fetching case notes: " + response.statusCode());
+                return new JSONArray();
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching case notes: " + e.getMessage());
+                return new JSONArray();
+            });
+}
+
+/**
+ * Fetches all cases with assigned officer information
+ */
+public CompletableFuture<JSONArray> getAllCasesWithOfficers() {
+    String url = SUPABASE_URL + "cases?select=*,users!cases_assigned_to_fkey(fullname)";
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                if (response.statusCode() == 200) {
+                    return new JSONArray(response.body());
+                }
+                System.err.println("❌ Error fetching cases with officers: " + response.statusCode());
+                return new JSONArray();
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception fetching cases with officers: " + e.getMessage());
+                return new JSONArray();
+            });
+}
+
+/**
+ * Updates case status in the database
+ */
+public CompletableFuture<Boolean> updateCaseStatusprogress(String caseId, String newStatus) {
+    JSONObject payload = new JSONObject();
+    payload.put("status", newStatus);
+    payload.put("updated_at", java.time.Instant.now().toString());
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(SUPABASE_URL + "cases?id=eq." + caseId))
+            .header("apikey", SUPABASE_ANON_KEY)
+            .header("Content-Type", "application/json")
+            .header("Prefer", "return=minimal")
+            .method("PATCH", HttpRequest.BodyPublishers.ofString(payload.toString()))
+            .build();
+
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(response -> {
+                boolean success = response.statusCode() == 200 || response.statusCode() == 204;
+                if (success) {
+                    System.out.println("✅ Case status updated successfully");
+                } else {
+                    System.err.println("❌ Failed to update case status: " + response.statusCode());
+                }
+                return success;
+            })
+            .exceptionally(e -> {
+                System.err.println("❌ Exception updating case status: " + e.getMessage());
+                return false;
+            });
+}
+
 
 }

@@ -2,38 +2,61 @@
 
 package guardx.Dataclass;
 
-// This class uses standard String properties, which is fine for PropertyValueFactory.
-// For robust JavaFX binding, consider using javafx.beans.property.StringProperty.
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Case {
     
-    private final String id; 
-    private final String title; 
-    private final String assignedToId; 
-    private final String officerName; 
-    private final String priority;
-    private String status;
-    private final String lastUpdate; 
+    private final StringProperty id;
+    private final StringProperty title;
+    private final StringProperty assignedToId;
+    private final StringProperty officerName;
+    private final StringProperty priority;
+    private final StringProperty status;
+    private final StringProperty lastUpdate;
 
     public Case(String id, String title, String assignedToId, String officerName, 
                 String priority, String status, String lastUpdate) {
-        this.id = id;
-        this.title = title;
-        this.assignedToId = assignedToId;
-        this.officerName = officerName;
-        this.priority = priority;
-        this.status = status;
-        this.lastUpdate = lastUpdate;
+        this.id = new SimpleStringProperty(id);
+        this.title = new SimpleStringProperty(title);
+        this.assignedToId = new SimpleStringProperty(assignedToId);
+        this.officerName = new SimpleStringProperty(officerName);
+        this.priority = new SimpleStringProperty(priority);
+        this.status = new SimpleStringProperty(status);
+        this.lastUpdate = new SimpleStringProperty(lastUpdate);
     }
 
-    // --- Getters (Must match PropertyValueFactory names) ---
-    public String getId() { return id; }
-    public String getType() { return title; } // Map 'title' from DB to 'Type' column in UI
-    public String getOfficer() { return officerName; } 
-    public String getPriority() { return priority; }
-    public String getLastUpdate() { return lastUpdate; }
-    public String getStatus() { return status; }
+    // --- Property Getters (for JavaFX binding) ---
+    public StringProperty idProperty() { return id; }
+    public StringProperty titleProperty() { return title; }
+    public StringProperty assignedToIdProperty() { return assignedToId; }
+    public StringProperty officerNameProperty() { return officerName; }
+    public StringProperty priorityProperty() { return priority; }
+    public StringProperty statusProperty() { return status; }
+    public StringProperty lastUpdateProperty() { return lastUpdate; }
+
+    // --- Standard Getters (for PropertyValueFactory) ---
+    public String getId() { return id.get(); }
+    public String getTitle() { return title.get(); }
+    public String getAssignedToId() { return assignedToId.get(); }
+    public String getOfficerName() { return officerName.get(); }
+    public String getPriority() { return priority.get(); }
+    public String getStatus() { return status.get(); }
+    public String getLastUpdate() { return lastUpdate.get(); }
+
+    // --- Setters ---
+    public void setId(String id) { this.id.set(id); }
+    public void setTitle(String title) { this.title.set(title); }
+    public void setAssignedToId(String assignedToId) { this.assignedToId.set(assignedToId); }
+    public void setOfficerName(String officerName) { this.officerName.set(officerName); }
+    public void setPriority(String priority) { this.priority.set(priority); }
+    public void setStatus(String status) { this.status.set(status); }
+    public void setLastUpdate(String lastUpdate) { this.lastUpdate.set(lastUpdate); }
+
+    // --- Additional getters for table column compatibility ---
+    // For tables that expect "getType()" instead of "getTitle()"
+    public String getType() { return title.get(); }
     
-    // --- Setter for the ComboBox update ---
-    public void setStatus(String status) { this.status = status; }
+    // For tables that expect "getOfficer()" instead of "getOfficerName()"
+    public String getOfficer() { return officerName.get(); }
 }
