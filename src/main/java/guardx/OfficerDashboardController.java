@@ -1,106 +1,31 @@
 package guardx;
 
-import java.io.IOException;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 public class OfficerDashboardController {
 
     @FXML private Label welcomeLabel;
-    @FXML private TableView<RecentCase> recentCasesTable;
-
-    @FXML private TableColumn<RecentCase, String> colCaseId;
-    @FXML private TableColumn<RecentCase, String> colType;
-    @FXML private TableColumn<RecentCase, String> colStatus;
-    @FXML private TableColumn<RecentCase, String> colPriority;
-    @FXML private TableColumn<RecentCase, String> colDate;
-    @FXML private TableColumn<RecentCase, Void> colAction;
-
+    @FXML private Label totalReports, openCases, pendingComplaints, resolvedCases;
     @FXML private VBox reportCard, assignCard, casesCard;
+
+    private final SupabaseService service = new SupabaseService(); // your service class
 
     @FXML
     public void initialize() {
         welcomeLabel.setText("Welcome, Officer Salman!");
-
-        colCaseId.setCellValueFactory(new PropertyValueFactory<>("caseId"));
-        colType.setCellValueFactory(new PropertyValueFactory<>("type"));
-        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colPriority.setCellValueFactory(new PropertyValueFactory<>("priority"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-        addActionButtonToTable();
         addHoverEffect(reportCard);
         addHoverEffect(assignCard);
         addHoverEffect(casesCard);
 
-        ObservableList<RecentCase> data = FXCollections.observableArrayList(
-                new RecentCase("#1234", "Theft Report", "In Progress", "High", "2 hours ago"),
-                new RecentCase("#1235", "Traffic Violation", "Pending", "Low", "5 hours ago"),
-                new RecentCase("#1236", "Assault", "In Progress", "High", "1 day ago"),
-                new RecentCase("#1237", "Fraud", "Pending", "Medium", "2 days ago")
-        );
-
-        recentCasesTable.setItems(data);
+        // Fetch and update dashboard
+        updateDashboardValues();
     }
 
-    private void addActionButtonToTable() {
-        colAction.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("View");
-
-            {
-                btn.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold;");
-                btn.setOnAction(e -> {
-                    RecentCase selectedCase = getTableView().getItems().get(getIndex());
-                    openCaseDetailsPopup(selectedCase);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
-            }
-        });
-    }
-
-    private void openCaseDetailsPopup(RecentCase selectedCase) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("CaseDetailsPopup.fxml"));
-            VBox popupRoot = loader.load();
-
-            CaseDetailsPopupController controller = loader.getController();
-            controller.setCaseDetails(selectedCase);
-
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Case Details");
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setScene(new Scene(popupRoot));
-            popupStage.show();
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    // Hover animation
+    // Hover animation for quick action cards
     private void addHoverEffect(VBox card) {
         card.setOnMouseEntered(e -> card.setStyle(card.getStyle().replace("#f9fafb", "#e2e8f0")));
         card.setOnMouseExited(e -> card.setStyle(card.getStyle().replace("#e2e8f0", "#f9fafb")));
@@ -108,41 +33,35 @@ public class OfficerDashboardController {
         card.setOnMouseReleased(e -> card.setStyle(card.getStyle().replace("#cbd5e1", "#e2e8f0")));
     }
 
-    // ⬅ Navigation Methods to fix FXML errors
-    @FXML
-    private void goToReports(MouseEvent event) {
-        System.out.println("Navigate → Reports");
-        // Add scene change logic here
+    // Navigation handlers
+    @FXML private void goToReports(MouseEvent event) {
+        try { App.setRoot("ViewValidateReports"); } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @FXML
-    private void goToAssign(MouseEvent event) {
-        System.out.println("Navigate → Assign Officer");
-        // Add scene change logic here
+    @FXML private void goToAssign(MouseEvent event) {
+        try { App.setRoot("AssignOfficer"); } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @FXML
-    private void goToCases(MouseEvent event) {
-        System.out.println("Navigate → Cases");
-        // Add scene change logic here
+    @FXML private void goToCases(MouseEvent event) {
+        try { App.setRoot("UpdateCaseStatus"); } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // Model class
-    public static class RecentCase {
-        private final String caseId, type, status, priority, date;
+    // --- Fetch data from database and update dashboard labels ---
+    private void updateDashboardValues() {
+        // Example: fetch data from your SupabaseService (async)
+        service.fetchDashboardStats().thenAccept(stats -> {
+            Platform.runLater(() -> {
 
-        public RecentCase(String caseId, String type, String status, String priority, String date) {
-            this.caseId = caseId;
-            this.type = type;
-            this.status = status;
-            this.priority = priority;
-            this.date = date;
-        }
+                //@FXML private Label totalReports, totalReports, totalReports, totalReports;
 
-        public String getCaseId() { return caseId; }
-        public String getType() { return type; }
-        public String getStatus() { return status; }
-        public String getPriority() { return priority; }
-        public String getDate() { return date; }
+                totalReports.setText(String.valueOf(stats.getTotalReports()));
+                totalReports.setText(String.valueOf(stats.getOpenCases()));
+                totalReports.setText(String.valueOf(stats.getPendingComplaints()));
+                totalReports.setText(String.valueOf(stats.getResolvedCases()));
+            });
+        }).exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
+        });
     }
 }

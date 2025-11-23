@@ -6,7 +6,17 @@ import guardx.Dataclass.Case;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -40,44 +50,51 @@ public class LaunchFirController {
     private final String currentOfficerId = Globals.current_user_id; 
     private final String currentOfficerName = Globals.current_user_name; 
 
-    @FXML
-    public void initialize() {
-        // Set officer labels
-        assignedOfficerLabel.setText(currentOfficerName);
-        creatorIdLabel.setText(currentOfficerId);
+@FXML
+public void initialize() {
+    // Set officer labels
+    assignedOfficerLabel.setText(currentOfficerName);
+    creatorIdLabel.setText(currentOfficerId);
 
-        // Setup combo box options
-        titleComboBox.getItems().addAll("Theft", "Assault", "Missing Person", "Cyber Crime", "Other");
-        priorityComboBox.getItems().addAll("High", "Medium", "Low");
+    // Setup combo box options
+    titleComboBox.getItems().addAll("Theft", "Assault", "Missing Person", "Cyber Crime", "Other");
+    priorityComboBox.getItems().addAll("High", "Medium", "Low");
 
-        // Initialize ToggleGroup
-        modeToggleGroup = new ToggleGroup();
-        existingCaseRadio.setToggleGroup(modeToggleGroup);
-        newCaseRadio.setToggleGroup(modeToggleGroup);
-        existingCaseRadio.setSelected(true);
+    // Initialize ToggleGroup
+    modeToggleGroup = new ToggleGroup();
+    existingCaseRadio.setToggleGroup(modeToggleGroup);
+    newCaseRadio.setToggleGroup(modeToggleGroup);
 
-        // Load accepted cases
-        loadAcceptedCases();
+    // --- Always select Existing Case initially ---
+    existingCaseRadio.setSelected(true);
+    existingCaseForm.setVisible(true);
+    existingCaseForm.setManaged(true);
+    newCaseForm.setVisible(false);
+    newCaseForm.setManaged(false);
 
-        // Toggle listener
-        modeToggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-            boolean isExisting = newVal == existingCaseRadio;
+    // Load accepted cases
+    loadAcceptedCases();
 
-            existingCaseForm.setVisible(isExisting);
-            existingCaseForm.setManaged(isExisting);
+    // Toggle listener
+    modeToggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+        boolean isExisting = newVal == existingCaseRadio;
 
-            newCaseForm.setVisible(!isExisting);
-            newCaseForm.setManaged(!isExisting);
+        existingCaseForm.setVisible(isExisting);
+        existingCaseForm.setManaged(isExisting);
 
-            submitButton.setDisable(false);
-            existingCaseErrorLabel.setText("");
-            newCaseErrorLabel.setText("");
-        });
+        newCaseForm.setVisible(!isExisting);
+        newCaseForm.setManaged(!isExisting);
 
-        // Button actions
-        submitButton.setOnAction(e -> handleSubmit());
-        cancelButton.setOnAction(e -> closeDialog());
-    }
+        submitButton.setDisable(false);
+        existingCaseErrorLabel.setText("");
+        newCaseErrorLabel.setText("");
+    });
+
+    // Button actions
+    submitButton.setOnAction(e -> handleSubmit());
+    cancelButton.setOnAction(e -> closeDialog());
+}
+
 
     // --- Load non-closed cases assigned to this officer ---
     private void loadAcceptedCases() {
@@ -174,24 +191,24 @@ public class LaunchFirController {
         // Insert new case
       // insertNewCase should return CompletableFuture<String> (UUID)
 service.insertNewCase(title, description, priority, status, currentOfficerId, currentOfficerId)
-       .thenAccept(newCaseId -> Platform.runLater(() -> {
-           if (newCaseId != null && !newCaseId.isEmpty()) {
-               // now newCaseId is a String, UUID
-               service.insertFir(newCaseId, Globals.user_fir)
-                      .thenAccept(firSuccess -> Platform.runLater(() -> {
-                          if (firSuccess) {
-                              showConfirmationAndReturnDashboard("FIR Registered",
-                                  "New case created and FIR registered successfully.");
-                          } else {
-                              newCaseErrorLabel.setText("Case created, but FIR registration failed.");
-                              submitButton.setDisable(false);
-                          }
-                      }));
-           } else {
-               newCaseErrorLabel.setText("Failed to create new case.");
-               submitButton.setDisable(false);
-           }
-       }));
+    .thenAccept(newCaseId -> Platform.runLater(() -> {
+        if (newCaseId != null && !newCaseId.isEmpty()) {  // newCaseId is now String UUID
+            // Insert FIR for the newly created case
+            service.insertFir(newCaseId, Globals.user_fir)
+                .thenAccept(firSuccess -> Platform.runLater(() -> {
+                    if (firSuccess) {
+                        showConfirmationAndReturnDashboard("FIR Registered",
+                                "New case created and FIR registered successfully.");
+                    } else {
+                        newCaseErrorLabel.setText("Case created, but FIR registration failed.");
+                        submitButton.setDisable(false);
+                    }
+                }));
+        } else {
+            newCaseErrorLabel.setText("Failed to create new case.");
+            submitButton.setDisable(false);
+        }
+    }));
 
 
     }

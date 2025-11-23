@@ -113,7 +113,7 @@ public class UpdateCaseStatusController {
                     Platform.runLater(() -> {
                         try {
                             // 💡 IMPORTANT: Replace Globals.FXML_LAUNCH_FIR with your actual FXML constant
-                            App.setRoot(Globals.FXML_LAUNCH_FIR);
+                            App.setRoot("SearchCriminalRecords");
                         } catch (Exception e) {
                             e.printStackTrace();
                             System.err.println("❌ Failed to load FIR page FXML.");

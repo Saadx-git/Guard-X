@@ -16,8 +16,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.util.List;
-
 public class SearchCriminalRecordsController {
 
     @FXML private TextField searchField;
@@ -74,6 +72,9 @@ public class SearchCriminalRecordsController {
                     launchFirButton.setOnAction(e -> {
                         System.out.println("Launching FIR for User: " + user.getName() + " (" + user.getId() + ")");
                         Globals.user_fir = user.getId(); // Store selected user ID
+                        Globals.Click_name = user.getName();
+                        Globals.Click_cnic = user.getCnic();
+
                         try {
                             App.setRoot(Globals.FXML_LAUNCH_FIR);
                         } catch (Exception ex) {
@@ -85,6 +86,15 @@ public class SearchCriminalRecordsController {
                     Button getRecordButton = new Button("View Record");
                     getRecordButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white;");
                     getRecordButton.setOnAction(e -> {
+                        Globals.View_profile = user.getId(); // Store selected user ID
+                         try {
+                            App.setRoot("View_Criminal_Record");
+                        } catch (Exception ex) {
+                            //System.err.println("Navigation Error: Failed to load " + Globals.FXML_VIEW_CRIMINAL_RECORD + ".");
+                            ex.printStackTrace();
+                        }
+                        Globals.Click_name = user.getName();
+                        Globals.Click_cnic = user.getCnic();
                         System.out.println("Getting criminal record/profile for User: " + user.getName() + " (" + user.getCnic() + ")");
                     });
 

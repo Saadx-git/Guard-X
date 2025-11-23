@@ -12,42 +12,36 @@ public class App extends Application {
     private static Scene scene;
     private static Stage AuthStage;
     
-    @Override
-    public void start(Stage stage) {
-        try {
-            System.out.println("🚀 Starting " + Globals.APP_NAME + " Application...");
-            AuthStage = stage;
-            System.out.println("Loading Login FXML...");    
+@Override
+public void start(Stage stage) {
+    try {
+        System.out.println("🚀 Starting " + Globals.APP_NAME + " Application...");
+        AuthStage = stage;
 
-            Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
-            
-            javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
-            double screenWidth = screenBounds.getWidth()-100;
-            double screenHeight = screenBounds.getHeight()-100;
-            
-            System.out.println("Screen dimensions: " + screenWidth + "x" + screenHeight);
-            
-            // Use full screen or adjust based on screen esize
-            scene = new Scene(root, screenWidth, screenHeight);
+        Parent root = FXMLLoader.load(getClass().getResource(Globals.FXML_LOGIN + ".fxml"));
 
-            AuthStage.setTitle(Globals.APP_NAME + " - " + Globals.APP_SUBTITLE);
-            AuthStage.setScene(scene);
-            AuthStage.setResizable(true);
-            AuthStage.centerOnScreen();
-            AuthStage.show();
+        // Get screen bounds minus taskbar
+        javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+        double maxWidth = screenBounds.getWidth();
+        double maxHeight = screenBounds.getHeight();
 
-            // enforce your desired window size after show
-            //uthStage.setWidth(Globals.APP_WIDTH);
-            //uthStage.setHeight(Globals.APP_HEIGHT);
+        double width = Math.min(Globals.APP_WIDTH, maxWidth);
+        double height = Math.min(Globals.APP_HEIGHT, maxHeight);
 
-            System.out.println("✅ Application started successfully!");
-        } catch (Exception e) {
-            System.out.println("❌ ERROR loading FXML: " + e.getMessage());
-            e.printStackTrace();
-        }
+        scene = new Scene(root, width, height);
+
+        AuthStage.setTitle(Globals.APP_NAME + " - " + Globals.APP_SUBTITLE);
+        AuthStage.setScene(scene);
+        AuthStage.setResizable(false); // fixed size
+        AuthStage.centerOnScreen();
+        AuthStage.show();
+
+        System.out.println("✅ Application started successfully!");
+    } catch (Exception e) {
+        System.out.println("❌ ERROR loading FXML: " + e.getMessage());
+        e.printStackTrace();
     }
-
-    
+}    
     public static void setRoot(String fxml) throws Exception {
         Parent root = FXMLLoader.load(App.class.getResource(fxml + ".fxml"));
         scene.setRoot(root);

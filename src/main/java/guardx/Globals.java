@@ -62,6 +62,11 @@ public class Globals {
     public static  String USERID = "";
 
     public static String user_fir = "";
+    public static String View_profile = "";
+    public static String Click_name = "";
+    public static String Click_cnic = "";
+    
+    
     
     // FXML Filesemergency_assistance
     public static final String FXML_LOGIN = "login";

@@ -57,7 +57,7 @@
 
                                     <VBox spacing="8" alignment="CENTER_LEFT">
                                         <Label text="Civilian Portal" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
-                                        <Label text="Access your account to submit reports and track cases" style="-fx-text-fill: #64748b; -fx-font-size: 14;" wrapText="true"/>
+                                        <Label text="Access your account to submit reports and track cases" style="-fx-text-fill: #61181dff; -fx-font-size: 14;" wrapText="true"/>
                                     </VBox>
 
                                     <VBox spacing="16">

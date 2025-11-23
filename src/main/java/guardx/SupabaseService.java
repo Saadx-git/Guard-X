@@ -151,6 +151,105 @@ public CompletableFuture<Boolean> registerUser(
             });
 }
 
+public CompletableFuture<DashboardStats> fetchDashboardStats() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                int totalReports = fetchTotalReportsFromDB();
+                int openCases = fetchOpenCasesFromDB();
+                int pendingComplaints = fetchPendingComplaintsFromDB();
+                int resolvedCases = fetchResolvedCasesFromDB();
+
+                return new DashboardStats(totalReports, openCases, pendingComplaints, resolvedCases);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new DashboardStats(0,0,0,0);
+            }
+        });
+    }
+
+public CompletableFuture<JSONArray> getAllCasesOfUser(String userId) {
+    return CompletableFuture.supplyAsync(() -> {
+        try {
+            // STEP 1 — Get FIR rows for user
+            String firUrl = SUPABASE_URL + "fir?user_id=eq." + userId + "&select=case_id";
+
+            HttpRequest firRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(firUrl))
+                    .header("apikey", SUPABASE_ANON_KEY)
+                    .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> firResponse = httpClient.send(firRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (firResponse.statusCode() != 200) {
+                System.out.println("❌ Failed to fetch FIRs: " + firResponse.body());
+                return new JSONArray();
+            }
+
+            JSONArray firArray = new JSONArray(firResponse.body());
+            if (firArray.length() == 0) {
+                System.out.println("ℹ No FIRs found for this user");
+                return new JSONArray();
+            }
+
+            // Collect all case_id values
+            StringBuilder inClause = new StringBuilder();
+            for (int i = 0; i < firArray.length(); i++) {
+                String caseId = firArray.getJSONObject(i).getString("case_id");
+                inClause.append(caseId).append(",");
+            }
+
+            // Remove last comma
+            inClause.setLength(inClause.length() - 1);
+
+            // STEP 2 — Query cases where id IN (case_ids)
+            String caseUrl = SUPABASE_URL + "cases?id=in.(" + inClause + ")&select=*";
+
+            HttpRequest caseRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(caseUrl))
+                    .header("apikey", SUPABASE_ANON_KEY)
+                    .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> caseResponse = httpClient.send(caseRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (caseResponse.statusCode() == 200) {
+                return new JSONArray(caseResponse.body());
+            } else {
+                System.out.println("❌ Failed to fetch cases: " + caseResponse.body());
+                return new JSONArray();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONArray();
+        }
+    });
+}
+
+public static class DashboardStats {
+        private final int totalReports, openCases, pendingComplaints, resolvedCases;
+
+        public DashboardStats(int totalReports, int openCases, int pendingComplaints, int resolvedCases) {
+            this.totalReports = totalReports;
+            this.openCases = openCases;
+            this.pendingComplaints = pendingComplaints;
+            this.resolvedCases = resolvedCases;
+        }
+        public int getTotalReports() { return totalReports; }
+        public int getOpenCases() { return openCases; }
+        public int getPendingComplaints() { return pendingComplaints; }
+        public int getResolvedCases() { return resolvedCases; }
+    }
+
+    // Implement DB queries here
+    private int fetchTotalReportsFromDB() { return 5; }
+    private int fetchOpenCasesFromDB() { return 2; }
+    private int fetchPendingComplaintsFromDB() { return 8; }
+    private int fetchResolvedCasesFromDB() { return 6; }
+
  /**
  * Saves an incident report to the incidents table with user_id.
  */
@@ -165,51 +264,106 @@ public CompletableFuture<Boolean> registerUser(
      * @return A CompletableFuture of the newly generated case ID, or -1 on failure.
      */
 
-    public CompletableFuture<Integer> insertNewCase(String title, String description, String priority, String status, String creatorId, String assignedToId) {
-        return CompletableFuture.supplyAsync(() -> {
-            // --- MOCK IMPLEMENTATION ---
-            // Replace with actual Supabase insert logic.
-            System.out.println("DB: Inserting new case. Title: " + title);
-            try {
-                Thread.sleep(500); // Simulate network delay
-                // Return a mock ID for the newly created case
-                return 5001; 
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return -1;
-            }
-        });
-    }
+public CompletableFuture<String> insertNewCase(
+        String title,
+        String description,
+        String priority,
+        String status,
+        String creatorId,
+        String assignedToId
+) {
+    return CompletableFuture.supplyAsync(() -> {
+        try {
+            // Build payload
+            JSONObject payload = new JSONObject();
+            payload.put("title", title);
+            payload.put("description", description);
+            payload.put("priority", priority);
+            payload.put("status", status);
+            payload.put("creator", creatorId);
+            payload.put("assigned_to", assignedToId);
 
-    /**
+            // Debug
+            System.out.println("📤 New Case Payload: " + payload.toString());
+
+            // Send POST request
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(SUPABASE_URL + "cases?select=id")) // add select=id to get the new UUID
+                    .header("Content-Type", "application/json")
+                    .header("apikey", SUPABASE_ANON_KEY)
+                    .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                    .header("Prefer", "return=representation") // get created row back
+                    .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("📡 New Case response status: " + response.statusCode());
+            System.out.println("📡 New Case response body: " + response.body());
+
+            if (response.statusCode() == 201 || response.statusCode() == 200) {
+                // Supabase returns array even for single insert
+                JSONArray arr = new JSONArray(response.body());
+                if (arr.length() > 0) {
+                    JSONObject first = arr.getJSONObject(0);
+                    return first.getString("id"); // Return the UUID
+                }
+            }
+            return null; // failed
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    });
+}
+
+
+/**
      * Inserts a new entry into the 'fir' table, formalizing the case.
      * @return A CompletableFuture of true if successful, false otherwise.
      */
 public CompletableFuture<Boolean> insertFir(String caseId, String userId) {
     return CompletableFuture.supplyAsync(() -> {
-        JSONObject payload = new JSONObject(); // <-- define inside method
-        payload.put("case_id", caseId);
-        payload.put("user_id", userId);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(SUPABASE_URL + "/rest/v1/fir"))
-                .header("Content-Type", "application/json")
-                .header("apikey", SUPABASE_ANON_KEY)
-                .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
-                .header("Prefer", "return=minimal")
-                .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
-                .build();
-
         try {
+            // --- Build payload ---
+            JSONObject payload = new JSONObject();
+            payload.put("case_id", caseId);  // UUID of the case
+            payload.put("user_id", userId);  // UUID of the officer/user
+
+            // --- Debug payload ---
+            System.out.println("📤 FIR Payload: " + payload.toString());
+
+            // --- Build request ---
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(SUPABASE_URL + "fir"))  // <-- only append table name
+                    .header("Content-Type", "application/json")
+                    .header("apikey", SUPABASE_ANON_KEY)
+                    .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                    .header("Prefer", "return=minimal") // optional
+                    .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
+                    .build();
+
+            // --- Debug request ---
+            System.out.println("🔗 Sending POST request to: " + request.uri());
+            request.headers().map().forEach((k, v) -> System.out.println("Header: " + k + " = " + v));
+
+            // --- Send request ---
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 201 || response.statusCode() == 200;
+
+            // --- Debug response ---
+            System.out.println("📡 FIR insert response status: " + response.statusCode());
+            System.out.println("📡 FIR insert response body: " + response.body());
+
+            // Success if status 201 (inserted)
+            return response.statusCode() == 201;
+
         } catch (Exception e) {
+            System.err.println("❌ Exception during FIR insert:");
             e.printStackTrace();
             return false;
         }
     });
 }
-
 
 
 public CompletableFuture<Boolean> saveIncident(

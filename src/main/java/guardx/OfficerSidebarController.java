@@ -64,7 +64,12 @@ private void handleDashboard(MouseEvent event) {
     @FXML
     private void handleLogout(MouseEvent event) {
         System.out.println("Logout clicked");
-        //App.setRoot("Login");
+         try {
+            App.setRoot("login");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML private void handleRecords(MouseEvent event) {

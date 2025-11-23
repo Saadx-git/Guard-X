@@ -4,10 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="guardx.OfficerDashboardController"
@@ -26,7 +24,6 @@
                     <Label fx:id="welcomeLabel"
                            text="Welcome, Officer!"
                            style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;" />
-
                     <Label text="Officer Dashboard - Monitor cases, validate reports, and manage assignments"
                            style="-fx-text-fill: #cbd5e1; -fx-font-size: 14;" />
                 </VBox>
@@ -47,7 +44,7 @@
                             style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
                                     -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
                             <Label text="Total Reports" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
-                            <Label fx:id="totalReports" text="156"
+                            <Label fx:id="totalReports" text="10"
                                 style="-fx-font-size: 32; -fx-font-weight: bold;" />
                             <Label text="+12 this week" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
                         </VBox>
@@ -57,7 +54,7 @@
                             style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
                                     -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
                             <Label text="Open Cases" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
-                            <Label fx:id="openCases" text="42"
+                            <Label fx:id="openCases" text="5"
                                 style="-fx-font-size: 32; -fx-font-weight: bold;" />
                             <Label text="8 require attention" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
                         </VBox>
@@ -67,7 +64,7 @@
                             style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
                                     -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
                             <Label text="Complaints Pending" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
-                            <Label fx:id="pendingComplaints" text="18"
+                            <Label fx:id="pendingComplaints" text="2"
                                 style="-fx-font-size: 32; -fx-font-weight: bold;" />
                             <Label text="+3 new" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
                         </VBox>
@@ -77,7 +74,7 @@
                             style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-padding: 20;
                                     -fx-effect: dropshadow(gaussian, #00000033, 8, 0, 0, 2);">
                             <Label text="Resolved Cases" style="-fx-font-size: 14; -fx-text-fill: #475569;" />
-                            <Label fx:id="resolvedCases" text="234"
+                            <Label fx:id="resolvedCases" text="3"
                                 style="-fx-font-size: 32; -fx-font-weight: bold;" />
                             <Label text="+15 this month" style="-fx-font-size: 12; -fx-text-fill: #64748b;" />
                         </VBox>
@@ -125,23 +122,6 @@
                             <Label text="Update case progress" style="-fx-font-size: 15; -fx-text-fill: #64748b;"/>
                         </VBox>
                     </HBox>
-                </VBox>
-
-                <!-- Recent Cases Table -->
-                <VBox spacing="10">
-                    <Label text="Latest Assigned Cases" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
-                    <Label text="Your most recent assignments" style="-fx-text-fill: #64748b;"/>
-
-                    <TableView fx:id="recentCasesTable" prefHeight="400">
-                        <columns>
-                            <TableColumn text="Case ID" fx:id="colCaseId" prefWidth="100"/>
-                            <TableColumn text="Type" fx:id="colType" prefWidth="200"/>
-                            <TableColumn text="Status" fx:id="colStatus" prefWidth="120"/>
-                            <TableColumn text="Priority" fx:id="colPriority" prefWidth="120"/>
-                            <TableColumn text="Date" fx:id="colDate" prefWidth="150"/>
-                            <TableColumn text="Action" fx:id="colAction" prefWidth="120"/>
-                        </columns>
-                    </TableView>
                 </VBox>
 
             </VBox>
