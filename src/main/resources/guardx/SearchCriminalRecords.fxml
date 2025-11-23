@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-
+    
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="guardx.SearchCriminalRecordsController" prefWidth="1200" prefHeight="700">
 
     <left>
@@ -10,7 +10,7 @@
     </left>
 
     <center>
-        <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #f3f4f6;">
+        <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #f3f4f6;" BorderPane.alignment="CENTER">
 
             <VBox spacing="5">
                 <Label text="Search Civilian Users" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
@@ -27,7 +27,8 @@
                 <Label text="Access is logged and monitored. Unauthorized searches are prohibited." style="-fx-text-fill: #b45309;"/>
             </HBox>
 
-            <ListView fx:id="resultsList" prefHeight="400"/>
+            <!-- ListView that expands to use all remaining space -->
+            <ListView fx:id="resultsList" VBox.vgrow="ALWAYS"/>
         </VBox>
     </center>
 
