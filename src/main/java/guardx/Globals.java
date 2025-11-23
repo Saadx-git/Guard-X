@@ -60,6 +60,8 @@ public class Globals {
     public static final String ROLE_OFFICER = "officer";
     public static final String ROLE_ADMIN = "admin";
     public static  String USERID = "";
+
+    public static String user_fir = "";
     
     // FXML Filesemergency_assistance
     public static final String FXML_LOGIN = "login";
@@ -73,7 +75,10 @@ public class Globals {
     public static final String FXML_OFFICER_DASHBOARD = "OfficerDashboard";
     public static final String FXML_ADMIN_DASHBOARD = "admin_dashboard";
     public static final String FXML_REGISTER = "register_form"; // <-- ADD THIS
+    public static final String FXML_LAUNCH_FIR = "launch_FIR"; // <-- ADD THIS
 
+
+    
     public static final String FXML_ASSIGN_OFFICER = "AssignOfficer";
 
 

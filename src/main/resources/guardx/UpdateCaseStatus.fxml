@@ -76,6 +76,8 @@
                     <TableColumn text="Priority" fx:id="colPriority" prefWidth="100"/>
                     <TableColumn text="Current Status" fx:id="colStatus" prefWidth="150"/>
                     <TableColumn text="Update Status" fx:id="colUpdate" prefWidth="150"/>
+                    <TableColumn text="Launch FIR" fx:id="colFIR" prefWidth="150"/>
+                    
                     <TableColumn text="Last Update" fx:id="colLastUpdate" prefWidth="120"/>
                 </columns>
             </TableView>

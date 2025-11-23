@@ -1,5 +1,6 @@
 package guardx;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import guardx.Dataclass.Case;
@@ -118,6 +120,8 @@ public CompletableFuture<Boolean> registerUser(
                         
                         // Store in globals for backward compatibility
                         Globals.current_user_id = user.getString("id");
+                        Globals.USERID = user.getString("id");
+                        
                         Globals.current_user_name = user.getString("fullname");
                         Globals.current_user_role = user.getString("role");
                         Globals.current_user_email = user.getString("email");
@@ -150,6 +154,64 @@ public CompletableFuture<Boolean> registerUser(
  /**
  * Saves an incident report to the incidents table with user_id.
  */
+
+
+
+
+
+
+    /**
+     * Inserts a new case entry into the 'case' table.
+     * @return A CompletableFuture of the newly generated case ID, or -1 on failure.
+     */
+
+    public CompletableFuture<Integer> insertNewCase(String title, String description, String priority, String status, String creatorId, String assignedToId) {
+        return CompletableFuture.supplyAsync(() -> {
+            // --- MOCK IMPLEMENTATION ---
+            // Replace with actual Supabase insert logic.
+            System.out.println("DB: Inserting new case. Title: " + title);
+            try {
+                Thread.sleep(500); // Simulate network delay
+                // Return a mock ID for the newly created case
+                return 5001; 
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return -1;
+            }
+        });
+    }
+
+    /**
+     * Inserts a new entry into the 'fir' table, formalizing the case.
+     * @return A CompletableFuture of true if successful, false otherwise.
+     */
+public CompletableFuture<Boolean> insertFir(String caseId, String userId) {
+    return CompletableFuture.supplyAsync(() -> {
+        JSONObject payload = new JSONObject(); // <-- define inside method
+        payload.put("case_id", caseId);
+        payload.put("user_id", userId);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(SUPABASE_URL + "/rest/v1/fir"))
+                .header("Content-Type", "application/json")
+                .header("apikey", SUPABASE_ANON_KEY)
+                .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                .header("Prefer", "return=minimal")
+                .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
+                .build();
+
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 201 || response.statusCode() == 200;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    });
+}
+
+
+
 public CompletableFuture<Boolean> saveIncident(
     String title,
     LocalDate date,
@@ -258,6 +320,152 @@ public CompletableFuture<Boolean> saveComplaint(
             });
 }
 
+
+
+public CompletableFuture<List<Case>> fetchAcceptedCases() {
+    final String officerId = Globals.current_user_id;
+    final String encodedOfficerId = URLEncoder.encode(officerId, StandardCharsets.UTF_8);
+
+    // Correct URL: do NOT select raw assigned_to and joined object at the same time
+    final String selectUrl = Globals.SUPABASE_URL + "/rest/v1/cases?select=id,title,status,priority,updated_at,assigned_to:users!cases_assigned_to_fkey(fullname)&assigned_to=eq." + encodedOfficerId + "&status=neq.Closed";
+
+    System.out.println("SupabaseService: Fetching non-closed cases from: " + selectUrl);
+
+    return CompletableFuture.supplyAsync(() -> {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(selectUrl))
+                    .header("apikey", Globals.SUPABASE_ANON_KEY)
+                    .header("Authorization", "Bearer " + Globals.SUPABASE_ANON_KEY)
+                    .header("Accept", "application/json")
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                String errorMsg = "Supabase HTTP Error: " + response.statusCode() + " Body: " + response.body();
+                System.err.println(errorMsg);
+                throw new RuntimeException(errorMsg);
+            }
+
+            JSONArray arr = new JSONArray(response.body());
+            List<Case> cases = new ArrayList<>();
+
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+
+                String id = obj.optString("id", "");
+                String title = obj.optString("title", "");
+                String status = obj.optString("status", "");
+                String priority = obj.optString("priority", "");
+                String lastUpdate = obj.optString("updated_at", "");
+
+                String officerName = "";
+                if (obj.has("assigned_to") && !obj.isNull("assigned_to")) {
+                    officerName = obj.getJSONObject("assigned_to").optString("fullname", "");
+                }
+
+                // assignedToId is just the officerId
+                String assignedToId = officerId;
+
+                cases.add(new Case(id, title, assignedToId, officerName, priority, status, lastUpdate));
+            }
+
+            System.out.println("SupabaseService: Parsed " + cases.size() + " cases.");
+            return cases;
+
+        } catch (IOException | InterruptedException | JSONException e) {
+            if (e instanceof InterruptedException) Thread.currentThread().interrupt();
+            System.err.println("? Exception fetching cases: " + e.getMessage());
+            return List.of();
+        }
+    });
+}
+
+
+public CompletableFuture<List<SearchCriminalRecordsController.CivilianUser>> fetchCivilianUsers() {
+        String url = SUPABASE_URL + "users?select=id,fullname,email,cnic,role&role=eq.civilian";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("apikey", SUPABASE_ANON_KEY)
+                .header("Authorization", "Bearer " + SUPABASE_ANON_KEY)
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response -> {
+                    List<SearchCriminalRecordsController.CivilianUser> list = new ArrayList<>();
+                    if (response.statusCode() == 200) {
+                        JSONArray arr = new JSONArray(response.body());
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = arr.getJSONObject(i);
+                            String id = obj.optString("id", "");
+                            String name = obj.optString("fullname", "");
+                            String cnic = obj.optString("cnic", "");
+                            int offenses = 0; // Optional: You can fetch offenses count separately if needed
+                            String status = "Active"; // Default status
+
+                            list.add(new SearchCriminalRecordsController.CivilianUser(
+                                    id, name, cnic, status, offenses
+                            ));
+                        }
+                    } else {
+                        System.err.println("❌ Failed to fetch civilians. Status: " + response.statusCode());
+                    }
+                    return list;
+                })
+                .exceptionally(e -> {
+                    System.err.println("❌ Exception fetching civilians: " + e.getMessage());
+                    return new ArrayList<>();
+                });
+    }
+
+// --- JSON parsing helper ---
+private List<Case> parseCasesJson(String responseBody) throws JSONException {
+    JSONArray jsonArray = new JSONArray(responseBody);
+    List<Case> caseList = new ArrayList<>();
+
+    for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject obj = jsonArray.getJSONObject(i);
+
+        String id = String.valueOf(obj.getInt("id"));
+        String title = obj.optString("type", "N/A");
+        String status = obj.optString("status", "N/A");
+
+        // Parse nested assigned_to object
+        String assignedToName = "Unassigned";
+        if (obj.has("assigned_to") && !obj.isNull("assigned_to")) {
+            JSONObject assignedObj = obj.getJSONObject("assigned_to");
+            assignedToName = assignedObj.optString("fullname", "Unassigned");
+        }
+
+        Case c = new Case(
+            id,
+            title,
+            "",             // assignedToId, can leave empty
+            assignedToName, // officerName
+            "",             // priority, leave empty
+            status,
+            ""              // lastUpdate, leave empty
+        );
+
+        caseList.add(c);
+    }
+
+    System.out.println("SupabaseService: Parsed " + caseList.size() + " cases.");
+    return caseList;
+}
+
+/**
+     * Parses the JSON response body from the Supabase /cases endpoint 
+     * into a List of Case objects using org.json.
+     * * @param jsonBody The raw JSON string response.
+     * @return A List of Case objects.
+     * @throws JSONException If the JSON is malformed.
+     */
 //Gets cases for a specific user (where user is the complainant)
 public CompletableFuture<JSONArray> getUserCases(String userId) {
     System.out.println("🔍 Fetching cases for user ID: " + userId);
@@ -307,6 +515,10 @@ public CompletableFuture<JSONArray> getUserCases(String userId) {
 }
 
 // Add these methods to your SupabaseService class
+
+
+
+
 
 /**
  * Gets all users from the users table

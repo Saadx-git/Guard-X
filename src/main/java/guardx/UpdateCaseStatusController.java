@@ -1,5 +1,3 @@
-// File: guardx/UpdateCaseStatusController.java
-
 package guardx;
 
 import guardx.Dataclass.Case; 
@@ -25,7 +23,10 @@ public class UpdateCaseStatusController {
     @FXML private TableColumn<Case, String> colOfficer;
     @FXML private TableColumn<Case, String> colPriority;
     @FXML private TableColumn<Case, String> colStatus;
+
     @FXML private TableColumn<Case, Void> colUpdate;
+    @FXML private TableColumn<Case, Void> colFIR; // The new column for the button
+    
     @FXML private TableColumn<Case, String> colLastUpdate;
     @FXML private Button refreshButton, exportButton;
 
@@ -34,6 +35,8 @@ public class UpdateCaseStatusController {
     
     @FXML
     public void initialize() {
+        System.out.println("✅ Update Case Status Controller initialized!");
+        
         // 1. Map Columns to Case Getters
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colType.setCellValueFactory(new PropertyValueFactory<>("type")); 
@@ -42,8 +45,9 @@ public class UpdateCaseStatusController {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colLastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate")); 
 
-        // 2. Add Status Update Column
+        // 2. Add custom columns (ComboBox for update, Button for FIR)
         addUpdateStatusColumn();
+        addLaunchFirColumn(); // 💡 INITIALIZE THE NEW COLUMN HERE
 
         // 3. Load Initial Data
         loadCaseData();
@@ -69,6 +73,7 @@ public class UpdateCaseStatusController {
             });
         }).exceptionally(e -> {
             System.err.println("❌ Failed to load cases: " + e.getMessage());
+            // Show alert or handle error appropriately
             return null;
         });
     }
@@ -85,6 +90,55 @@ public class UpdateCaseStatusController {
         closedCount.setText(String.valueOf(cases.stream().filter(c -> "Closed".equalsIgnoreCase(c.getStatus())).count()));
     }
 
+    // -------------------------------------------------------------------------
+    // Custom TableColumn Implementations
+    // -------------------------------------------------------------------------
+
+    /**
+     * Creates a custom TableCell containing a "Launch FIR" Button.
+     */
+    private void addLaunchFirColumn() {
+        colFIR.setCellFactory(col -> new TableCell<Case, Void>() {
+            private final Button btn = new Button("Launch FIR");
+            
+            {
+                // Set the button action
+                btn.setOnAction(event -> {
+                    // Get the Case item associated with this row
+                    final Case caseItem = getTableView().getItems().get(getIndex());
+                    
+                    System.out.println("FIR Launch requested for Case ID: " + caseItem.getId());
+                    
+                    // Navigate to the Launch FIR page
+                    Platform.runLater(() -> {
+                        try {
+                            // 💡 IMPORTANT: Replace Globals.FXML_LAUNCH_FIR with your actual FXML constant
+                            App.setRoot(Globals.FXML_LAUNCH_FIR);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.err.println("❌ Failed to load FIR page FXML.");
+                            // Consider adding an alert here
+                        }
+                    });
+                });
+                
+                // Optional: Style the button
+                btn.setStyle("-fx-background-color: #3f51b5; -fx-text-fill: white;");
+            }
+            
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    // Display the button
+                    setGraphic(btn);
+                }
+            }
+        });
+    }
+
     /**
      * Creates a custom TableCell containing a ComboBox to update the case status in the DB.
      */
@@ -97,7 +151,6 @@ public class UpdateCaseStatusController {
                 combo.getItems().addAll("Pending", "Investigating", "Resolved", "Closed");
                 
                 combo.setOnAction(e -> {
-                    // Check if the cell is currently displaying a row
                     if (getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
                         return;
                     }
@@ -106,7 +159,6 @@ public class UpdateCaseStatusController {
                     final String oldStatus = item.getStatus();
                     final String newStatus = combo.getValue();
                     
-                    // Prevent unnecessary database calls if status hasn't changed
                     if (oldStatus.equals(newStatus)) return;
 
                     // 1. Call the service to update status in the database

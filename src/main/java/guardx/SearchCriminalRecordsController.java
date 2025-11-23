@@ -3,77 +3,103 @@ package guardx;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
+import java.util.List;
 
 public class SearchCriminalRecordsController {
 
     @FXML private TextField searchField;
     @FXML private Button searchButton;
-    @FXML private ListView<CriminalRecord> resultsList;
+    @FXML private ListView<CivilianUser> resultsList;
 
-    private final ObservableList<CriminalRecord> records = FXCollections.observableArrayList();
+    private final ObservableList<CivilianUser> records = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // Add dummy data
-        records.addAll(
-            new CriminalRecord("CR-001", "Michael Anderson", "12345-6789012-3", "1985-03-15", "High", 2),
-            new CriminalRecord("CR-002", "David Thompson", "98765-4321098-7", "1990-08-22", "Low", 1),
-            new CriminalRecord("CR-003", "Sarah Williams", "56789-1234567-8", "1988-11-10", "Medium", 3)
-        );
+        // Fetch civilian users from Supabase
+        SupabaseService service = new SupabaseService();
+        service.fetchCivilianUsers().thenAccept(users -> {
+            records.addAll(users);
+            resultsList.setItems(records);
+        });
 
-        // Set ListView with custom card-style cells
-        resultsList.setItems(records);
+        // Custom ListView Cell Factory
         resultsList.setCellFactory(listView -> new ListCell<>() {
             @Override
-            protected void updateItem(CriminalRecord record, boolean empty) {
-                super.updateItem(record, empty);
-                if (empty || record == null) {
+            protected void updateItem(CivilianUser user, boolean empty) {
+                super.updateItem(user, empty);
+                if (empty || user == null) {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    VBox card = new VBox(5);
-                    card.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);");
+                    VBox card = new VBox(10);
+                    card.setStyle("-fx-background-color: white; -fx-padding: 15; -fx-border-radius: 8; " +
+                            "-fx-background-radius: 8; -fx-effect: dropshadow(gaussian, #00000022, 4, 0, 0, 1);");
 
-                    Text name = new Text(record.getName());
-                    name.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+                    Text name = new Text(user.getName());
+                    name.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
 
-                    Text cnic = new Text("CNIC: " + record.getCnic());
-                    Text dob = new Text("DOB: " + record.getDob());
-                    Text offenses = new Text("Known Offenses: " + record.getOffensesCount());
+                    Text cnic = new Text("CNIC: " + user.getCnic());
+                    Text reports = new Text("Reports Filed: " + user.getOffensesCount());
 
-                    // Risk badge
-                    Label risk = new Label(record.getRiskLevel() + " Risk");
-                    risk.setStyle("-fx-padding: 2 6 2 6; -fx-background-radius: 4; -fx-text-fill: white;");
-                    if (record.getRiskLevel().equalsIgnoreCase("High")) {
-                        risk.setStyle(risk.getStyle() + "-fx-background-color: #ef4444;");
-                    } else if (record.getRiskLevel().equalsIgnoreCase("Medium")) {
-                        risk.setStyle(risk.getStyle() + "-fx-background-color: #f59e0b;");
-                    } else if (record.getRiskLevel().equalsIgnoreCase("Low")) {
-                        risk.setStyle(risk.getStyle() + "-fx-background-color: #10b981;");
+                    // Status badge
+                    Label status = new Label(user.getRiskLevel());
+                    status.setStyle("-fx-padding: 2 6 2 6; -fx-background-radius: 4; -fx-text-fill: white;");
+                    if (user.getRiskLevel().equalsIgnoreCase("Active")) {
+                        status.setStyle(status.getStyle() + "-fx-background-color: #10b981;");
+                    } else if (user.getRiskLevel().equalsIgnoreCase("Suspended")) {
+                        status.setStyle(status.getStyle() + "-fx-background-color: #ef4444;");
                     } else {
-                        risk.setStyle(risk.getStyle() + "-fx-background-color: #6b7280;");
+                        status.setStyle(status.getStyle() + "-fx-background-color: #f59e0b;");
                     }
 
-                    HBox topRow = new HBox(10, name, risk);
-                    card.getChildren().addAll(topRow, cnic, dob, offenses);
+                    HBox topRow = new HBox(10, name, status);
+                    HBox.setHgrow(name, Priority.ALWAYS);
 
+                    // Buttons
+                    Button launchFirButton = new Button("Launch FIR");
+                    launchFirButton.setStyle("-fx-background-color: #22c55e; -fx-text-fill: white;");
+                    launchFirButton.setOnAction(e -> {
+                        System.out.println("Launching FIR for User: " + user.getName() + " (" + user.getId() + ")");
+                        Globals.user_fir = user.getId(); // Store selected user ID
+                        try {
+                            App.setRoot(Globals.FXML_LAUNCH_FIR);
+                        } catch (Exception ex) {
+                            System.err.println("Navigation Error: Failed to load " + Globals.FXML_LAUNCH_FIR + ".");
+                            ex.printStackTrace();
+                        }
+                    });
+
+                    Button getRecordButton = new Button("View Record");
+                    getRecordButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white;");
+                    getRecordButton.setOnAction(e -> {
+                        System.out.println("Getting criminal record/profile for User: " + user.getName() + " (" + user.getCnic() + ")");
+                    });
+
+                    HBox buttonRow = new HBox(10, launchFirButton, getRecordButton);
+                    buttonRow.setPadding(new Insets(10, 0, 0, 0));
+
+                    card.getChildren().addAll(topRow, cnic, reports, new Separator(), buttonRow);
                     setGraphic(card);
+                    setPrefWidth(Region.USE_COMPUTED_SIZE);
                 }
             }
         });
 
-        // Live search: update list as user types
+        // Search listeners
         searchField.textProperty().addListener((obs, oldValue, newValue) -> performSearch(newValue));
-
-        // Optional: manual search button
         searchButton.setOnAction(e -> performSearch(searchField.getText()));
     }
 
@@ -84,40 +110,36 @@ public class SearchCriminalRecordsController {
         }
 
         String lowerQuery = query.toLowerCase();
-        ObservableList<CriminalRecord> filtered = FXCollections.observableArrayList();
-        for (CriminalRecord rec : records) {
-            if (rec.getName().toLowerCase().contains(lowerQuery)
-                || rec.getCnic().contains(query)
-                || rec.getId().toLowerCase().contains(lowerQuery)) {
-                filtered.add(rec);
+        ObservableList<CivilianUser> filtered = FXCollections.observableArrayList();
+        for (CivilianUser user : records) {
+            if (user.getName().toLowerCase().contains(lowerQuery)
+                || user.getCnic().contains(query)
+                || user.getId().toLowerCase().contains(lowerQuery)) {
+                filtered.add(user);
             }
         }
         resultsList.setItems(filtered);
     }
 
-    // Inner class for dummy records
-    public static class CriminalRecord {
+    public static class CivilianUser {
         private final String id;
         private final String name;
         private final String cnic;
-        private final String dob;
-        private final String riskLevel;
-        private final int offensesCount;
+        private final String status;
+        private final int reportsFiled;
 
-        public CriminalRecord(String id, String name, String cnic, String dob, String riskLevel, int offensesCount) {
+        public CivilianUser(String id, String name, String cnic, String status, int reportsFiled) {
             this.id = id;
             this.name = name;
             this.cnic = cnic;
-            this.dob = dob;
-            this.riskLevel = riskLevel;
-            this.offensesCount = offensesCount;
+            this.status = status;
+            this.reportsFiled = reportsFiled;
         }
 
         public String getId() { return id; }
         public String getName() { return name; }
         public String getCnic() { return cnic; }
-        public String getDob() { return dob; }
-        public String getRiskLevel() { return riskLevel; }
-        public int getOffensesCount() { return offensesCount; }
+        public String getRiskLevel() { return status; }
+        public int getOffensesCount() { return reportsFiled; }
     }
 }
